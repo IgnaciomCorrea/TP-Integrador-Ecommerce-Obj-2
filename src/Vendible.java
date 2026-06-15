@@ -1,10 +1,11 @@
-public abstract class ClaseDePrueba {
+public abstract class Vendible {
     public String SKU;
     public String nombre;
     public String marca;
     public Categoria categoria;
     public String descripcion;
     public Double descuento;
+    public int cantidad;
 
     public String getNombre() {
         return nombre;
