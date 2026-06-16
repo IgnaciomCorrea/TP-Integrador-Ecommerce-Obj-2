@@ -1,3 +1,4 @@
+package Catalogo;
 public abstract class Vendible {
     private String SKU;
     private String nombre;

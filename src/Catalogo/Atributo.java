@@ -1,3 +1,4 @@
+package Catalogo;
 
 public class Atributo<T> {
 

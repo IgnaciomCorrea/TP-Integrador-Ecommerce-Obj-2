@@ -1,4 +1,4 @@
-
+package Catalogo;
 public class StockVendible {
 
 	private int stock;
