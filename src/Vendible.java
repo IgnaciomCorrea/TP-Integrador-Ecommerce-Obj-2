@@ -33,7 +33,8 @@ public abstract class Vendible {
 
     public abstract Double getPrecioFinal();
 
-    public boolean validarProducto() {
+    // preguntar
+    public boolean validarVendible() {
     	// return sku != null && nombre != null && ...  
     	return true; // BORRAR!
     }
