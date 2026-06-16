@@ -6,6 +6,7 @@ public class Producto extends Vendible{
 	private Set<Atributo<?>> atributos = new HashSet<Atributo<?>>();
 	private Double precio;
 
+	
     public Producto(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento,Double precio) {
         super(sku, nombre, marca, categoria, descripcion, descuento);
     	cantidad = 1;
