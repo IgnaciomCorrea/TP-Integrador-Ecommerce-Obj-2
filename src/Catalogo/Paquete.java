@@ -4,19 +4,19 @@ import java.util.List;
 
 public class Paquete extends Vendible{
    
-	private List<Vendible> paquetes;
+	private List<ItemVendible> vendibles;
 
     public Paquete(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento) {
     	super(sku, nombre, marca, categoria, descripcion, descuento);
-    	paquetes = new ArrayList<Vendible>();
+    	vendibles = new ArrayList<ItemVendible>();
     }    
     
     // Itera por todos los elementos de la lista paquetes y pide su precioBase, ya sea otro
     // paquete o un producto. 
     @Override
     public Double getPrecioBase() {
-    	return paquetes.stream()
-    					.mapToDouble(paquete->paquete.getPrecioBase())
+    	return vendibles.stream()
+    					.mapToDouble(vendible->vendible.getPrecioBase())
         				.sum();
     }
 
@@ -26,19 +26,12 @@ public class Paquete extends Vendible{
     	return precioBase - (precioBase * this.descuento);
     }
 
-    public void agregarVendible(Vendible vendible){
-    	paquetes.add(vendible);
+    public void agregarVendible(ItemVendible vendible){
+    	vendibles.add(vendible);
     }
     
-    public void eliminarVendible(Vendible vendible){
-    	paquetes.remove(vendible);
+    public void eliminarVendible(ItemVendible vendible){
+    	vendibles.remove(vendible);
     }
 
-    // Retorna el primer producto encontrado con el nombre dado, caso contrario retorna null.
-    public Vendible obtenerProducto(String nombre) {
-        return paquetes.stream()
-                       .filter(paquete -> paquete.getNombre().equals(nombre))
-                       .findFirst()                                         
-                       .orElse(null);
-    }
 }

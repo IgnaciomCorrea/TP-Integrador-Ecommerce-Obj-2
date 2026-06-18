@@ -1,12 +1,12 @@
 package Catalogo;
+
 public abstract class Vendible {
     private String SKU;
     private String nombre;
     private String marca;
     private Categoria categoria;
     private String descripcion;
-    public Double descuento;
-    protected int cantidad;
+    protected Double descuento;
 
     public Vendible(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento) {
     	this.SKU = sku;
@@ -29,7 +29,9 @@ public abstract class Vendible {
     public Categoria getCategoria() {
         return categoria;
     }
-
+    
+    
+    
     public abstract Double getPrecioBase();
 
     public abstract Double getPrecioFinal();
