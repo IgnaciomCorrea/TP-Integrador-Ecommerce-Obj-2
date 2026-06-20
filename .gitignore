@@ -30,3 +30,4 @@ bin/
 .DS_Store
 .gitignore
 .idea
+pom.xml

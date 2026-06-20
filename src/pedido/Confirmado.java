@@ -1,14 +1,17 @@
+package pedido;
+
+import Catalogo.Vendible;
 import exceptions.ExcepcionGeneral;
 
 public class Confirmado implements EstadoPedido {
     @Override
     public void agregarVendible(Pedido pedido, Vendible vendible) {
-        throw new ExcepcionGeneral("No se puede agregar ítems a un pedido confirmado");
+        throw new ExcepcionGeneral("No se puede agregar vendibles en este estado");
     }
 
     @Override
     public void quitarVendible(Pedido pedido, Vendible vendible) {
-        throw new ExcepcionGeneral("No se puede quitar ítems de un pedido confirmado");
+        throw new ExcepcionGeneral("No se puede quitar vendibles en este estado");
     }
 
     @Override
