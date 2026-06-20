@@ -1,13 +1,34 @@
+package pedido;
+
+import Catalogo.Vendible;
+import notificaciones.CambioEstadoEvento;
+import notificaciones.ObservadorPedido;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Pedido {
     private EstadoPedido estado;
     private List<Vendible> vendibles;
+    private List<ObservadorPedido> observadores;
 
     public Pedido() {
         this.estado = new Borrador();
         this.vendibles = new ArrayList<>();
+        this.observadores = new ArrayList<>();
+    }
+
+    public void agregarObservador(ObservadorPedido observador) {
+        observadores.add(observador);
+    }
+
+    public void setEstado(EstadoPedido nuevoEstado) {
+        EstadoPedido estadoAnterior = this.estado;
+        this.estado = nuevoEstado;
+        CambioEstadoEvento evento = new CambioEstadoEvento(estadoAnterior, nuevoEstado);
+        for (ObservadorPedido obs : observadores) {
+            obs.onCambioEstado(evento, this);
+        }
     }
 
     public void agregarVendible(Vendible vendible) {
@@ -36,10 +57,6 @@ public class Pedido {
 
     public void pasarAEntregado() {
         estado.pasarAEntregado(this);
-    }
-
-    public void setEstado(EstadoPedido nuevoEstado) {
-        this.estado = nuevoEstado;
     }
 
     public EstadoPedido getEstado() {

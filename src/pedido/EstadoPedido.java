@@ -1,3 +1,7 @@
+package pedido;
+
+import Catalogo.Vendible;
+
 public interface EstadoPedido {
     void agregarVendible(Pedido pedido, Vendible vendible);
     void quitarVendible(Pedido pedido, Vendible vendible);
