@@ -17,5 +17,10 @@ public class StockVendible {
 		this.stock = cantidad;
 	}
 	
-	// ver si necesitamos getVendible o getNombreVendible.
+	public String getNombre() {
+		return vendible.getNombre();
+	}
+	public Vendible getVendible() {
+		return this.vendible;
+	}
 }

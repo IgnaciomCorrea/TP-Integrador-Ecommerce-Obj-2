@@ -23,7 +23,7 @@ public class Paquete extends Vendible{
     @Override
     public Double getPrecioFinal(){
     	Double precioBase = this.getPrecioBase();
-    	return precioBase - (precioBase * this.descuento);
+    	return precioBase - (precioBase * this.descuento / 100);
     }
 
     public void agregarVendible(ItemVendible vendible){

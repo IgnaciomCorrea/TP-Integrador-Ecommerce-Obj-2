@@ -26,7 +26,7 @@ public class Producto extends Vendible{
     // getPrecioFinal retorna el precio habiendo aplicado el descuento particular del Producto.
     @Override
     public Double getPrecioFinal(){
-    	return this.getPrecioBase() - (this.getPrecioBase() * this.descuento);
+    	return this.getPrecioBase() - (this.getPrecioBase() * this.descuento / 100 );
     }
     
     // Busca un atributo dinámico, en la lista atributos, con el nombre dado para validar su existencia.
