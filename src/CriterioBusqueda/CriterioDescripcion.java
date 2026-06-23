@@ -2,13 +2,15 @@ package CriterioBusqueda;
 
 import Catalogo.Vendible;
 
-public class CriterioDescripcion extends CriterioSimple<String>{
+public class CriterioDescripcion extends Criterio{
 
+	private String texto;
+	
 	public CriterioDescripcion(String descripcion) {
-		super.criterioACumplir = descripcion.toLowerCase(); 
+		this.texto = descripcion.toLowerCase(); 
 	}
 	
 	public boolean validar(Vendible vendible) {
-		return vendible.getDescripcion().toLowerCase().contains(this.getCriterioABumplir());
+		return vendible.getDescripcion().toLowerCase().contains(this.texto);
 	}
 }
