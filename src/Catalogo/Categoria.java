@@ -1,0 +1,5 @@
+package Catalogo;
+
+public enum Categoria {
+	ELECTRONICA, ROPA, HOGAR, LIBROS, JUGUETES, DEPORTES	
+}
