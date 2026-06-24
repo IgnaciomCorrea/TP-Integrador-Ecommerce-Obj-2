@@ -14,15 +14,9 @@ public class Atributo<T> {
 		return nombre;
 	}
 	
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-	
 	public T getValor() {
 		return valor;
 	}
 	
-	public void setValor(T valor) {
-		this.valor = valor;
-	}
+
 }
