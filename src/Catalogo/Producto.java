@@ -16,7 +16,11 @@ public class Producto extends Vendible{
         this.peso = peso;
     }
 
-    // Constructor para el caso en que sí se indica la cantidad de producto. 
+    public Double getPeso() {
+		return peso;
+	}
+
+	// Constructor para el caso en que sí se indica la cantidad de producto. 
     public Producto(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento, int cantidad, Double precio) {
     	super(sku, nombre, marca, categoria, descripcion, descuento);
     	this.cantidad = cantidad;
