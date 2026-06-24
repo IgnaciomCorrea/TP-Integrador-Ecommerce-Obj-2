@@ -14,6 +14,6 @@ public abstract class MetodoPago <T extends MedioDePago>{
     protected abstract void ejecutarTransaccion(Double monto, T medio);
 
     protected void notificarResultado(Double monto, T medio) {
-        System.out.println("Registrando transacción...");
+        System.out.println("Registrando transacción....");
     }
 }
