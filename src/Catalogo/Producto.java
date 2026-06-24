@@ -6,12 +6,14 @@ public class Producto extends Vendible{
     
 	private Set<Atributo<?>> atributos = new HashSet<Atributo<?>>();
 	private Double precio;
+	private Double peso;
 
 	// Constructor para el caso en que no se dé la cantidad de Producto que contiene, por default es uno.
-    public Producto(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento,Double precio) {
+    public Producto(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento,Double precio, Double peso) {
         super(sku, nombre, marca, categoria, descripcion, descuento);
     	cantidad = 1;
         this.precio = precio;
+        this.peso = peso;
     }
 
     // Constructor para el caso en que sí se indica la cantidad de producto. 
