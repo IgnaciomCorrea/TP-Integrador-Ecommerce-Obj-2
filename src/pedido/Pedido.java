@@ -31,6 +31,15 @@ public class Pedido {
         }
     }
 
+    public double calcularPrecioTotal() {
+        return vendibles.stream().mapToDouble(Vendible::getPrecioFinal).sum();
+    }
+
+    public double calcularPesoTotal() {
+        //ToDo
+        return 0;
+    }
+
     public void agregarVendible(Vendible vendible) {
         estado.agregarVendible(this, vendible);
     }

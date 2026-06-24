@@ -33,7 +33,7 @@ class PaqueteTest {
     }
     
     @Test
-    @DisplayName("Debería crear un paquete vacío correctamente")
+    @DisplayName("Deberï¿½a crear un paquete vacï¿½o correctamente")
     void testCrearPaqueteVacio() {
         assertNotNull(paquete);
         // assertEquals(SKU, paquete.getSKU());
@@ -45,7 +45,7 @@ class PaqueteTest {
     }
     
     @Test
-    @DisplayName("Debería calcular correctamente el precio base de un paquete con items")
+    @DisplayName("Deberï¿½a calcular correctamente el precio base de un paquete con items")
     void testGetPrecioBaseConItems() {
         // Configurar mocks de ItemVendible (ya incluyen la cantidad en su precio)
         when(mockItem1.getPrecioBase()).thenReturn(500.0);  // 1 x 500
@@ -60,14 +60,14 @@ class PaqueteTest {
         // Precio total esperado: 500 + 600 + 400 = 1500
         assertEquals(1500.0, paquete.getPrecioBase(), 0.001);
         
-        // Verificar que se llamaron los métodos de los mocks
+        // Verificar que se llamaron los mï¿½todos de los mocks
         verify(mockItem1, times(1)).getPrecioBase();
         verify(mockItem2, times(1)).getPrecioBase();
         verify(mockItem3, times(1)).getPrecioBase();
     }
     
     @Test
-    @DisplayName("Debería calcular correctamente el precio final de un paquete con descuento")
+    @DisplayName("Deberï¿½a calcular correctamente el precio final de un paquete con descuento")
     void testGetPrecioFinalConDescuento() {
         when(mockItem1.getPrecioBase()).thenReturn(500.0);
         when(mockItem2.getPrecioBase()).thenReturn(600.0);
@@ -83,11 +83,11 @@ class PaqueteTest {
     }
     
     @Test
-    @DisplayName("Debería calcular correctamente el precio final de un paquete sin descuento")
+    @DisplayName("Deberï¿½a calcular correctamente el precio final de un paquete sin descuento")
     void testGetPrecioFinalSinDescuento() {
         Paquete paqueteSinDescuento = new Paquete(
-            "PAQ-002", "Kit Básico", "Genérica", 
-            Categoria.HOGAR, "Kit básico", 
+            "PAQ-002", "Kit Bï¿½sico", "Genï¿½rica", 
+            Categoria.HOGAR, "Kit bï¿½sico", 
             0.0
         );
         
@@ -101,7 +101,7 @@ class PaqueteTest {
     }
     
     @Test
-    @DisplayName("Debería calcular correctamente el precio de un paquete anidado (Composite)")
+    @DisplayName("Deberï¿½a calcular correctamente el precio de un paquete anidado (Composite)")
     void testGetPrecioBaseConPaqueteAnidado() {
         // Configurar mocks
         when(mockItem1.getPrecioBase()).thenReturn(500.0);
@@ -122,7 +122,7 @@ class PaqueteTest {
     }
     
     @Test
-    @DisplayName("Debería calcular el precio final de un paquete anidado aplicando descuentos")
+    @DisplayName("Deberï¿½a calcular el precio final de un paquete anidado aplicando descuentos")
     void testGetPrecioFinalConPaqueteAnidado() {
         // Configurar mocks
         when(mockItem1.getPrecioBase()).thenReturn(500.0);
@@ -140,9 +140,9 @@ class PaqueteTest {
     }
     
     @Test
-    @DisplayName("Debería agregar y eliminar vendibles correctamente")
+    @DisplayName("Deberï¿½a agregar y eliminar vendibles correctamente")
     void testAgregarYEliminarVendibles() {
-        // Verificar que comienza vacío
+        // Verificar que comienza vacï¿½o
         assertEquals(0.0, paquete.getPrecioBase(), 0.001);
         
         // Agregar un item
@@ -161,14 +161,14 @@ class PaqueteTest {
     }
     
     @Test
-    @DisplayName("Debería permitir agregar cualquier tipo de ItemVendible (Producto o Paquete)")
+    @DisplayName("Deberï¿½a permitir agregar cualquier tipo de ItemVendible (Producto o Paquete)")
     void testAgregarVendiblesDeDiferentesTipos() {
         // Crear un producto real
         Producto productoReal = new Producto(
             "PROD-003", "Teclado", "Logitech", 
-            Categoria.ELECTRONICA, "Teclado mecánico", 
-            0.0, 100.0
-        );
+            Categoria.ELECTRONICA, "Teclado mecï¿½nico", 
+            0.0, 100.0,
+                0.2);
         ItemVendible itemProducto = new ItemVendible(1, productoReal);
         
         // Crear un sub-paquete
@@ -179,9 +179,9 @@ class PaqueteTest {
         );
         Producto productoInterno = new Producto(
             "PROD-004", "Mouse", "Logitech", 
-            Categoria.ELECTRONICA, "Mouse inalámbrico", 
-            0.0, 50.0
-        );
+            Categoria.ELECTRONICA, "Mouse inalï¿½mbrico", 
+            0.0, 50.0,
+                0.2);
         subPaquete.agregarVendible(new ItemVendible(1, productoInterno));
         
         ItemVendible itemSubPaquete = new ItemVendible(1, subPaquete);
@@ -195,7 +195,7 @@ class PaqueteTest {
     }
     
     @Test
-    @DisplayName("Debería validar atributos obligatorios al crear un paquete")
+    @DisplayName("Deberï¿½a validar atributos obligatorios al crear un paquete")
     void testValidacionAtributosPaquete() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Paquete(null, NOMBRE, MARCA, CATEGORIA, DESCRIPCION, DESCUENTO);
