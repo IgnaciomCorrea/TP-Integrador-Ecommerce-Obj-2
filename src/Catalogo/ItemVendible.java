@@ -12,8 +12,8 @@ public class ItemVendible {
 		this.vendible = vendible;
 	}
 	
-	public Double getPrecioBase() {
-		return this.vendible.getPrecioBase() * cantidad;
+	public Double getPrecioFinal() {
+		return this.vendible.getPrecioFinal() * cantidad;
 	}
 	
 	public String getNombre() {

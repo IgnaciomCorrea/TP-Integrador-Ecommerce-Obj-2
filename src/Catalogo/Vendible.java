@@ -31,12 +31,16 @@ public abstract class Vendible {
         return categoria;
     }
    
+    public String getSku() { return SKU; }
+
     public abstract Double getPrecioBase();
 
     public abstract Double getPrecioFinal();
 
     public abstract Double getPeso();
-    
+
+
+
     private void validarAtributos(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento) {
     	this.validarString(sku, "sku"); 
     	this.validarString(nombre, "nombre");
@@ -48,19 +52,19 @@ public abstract class Vendible {
         
     private void validarString(String texto, String nombre) {
     	if (texto == null || texto.isBlank()) {
-    		throw new IllegalArgumentException("El atributo " + nombre + " es inválido.");
+    		throw new IllegalArgumentException("El atributo " + nombre + " es invï¿½lido.");
     	}
     }
     
     private void validarCategoria(Categoria categoria, String nombre) {
     	if (categoria == null) {
-    		throw new IllegalArgumentException("El atributo " + nombre + " es inválido.");
+    		throw new IllegalArgumentException("El atributo " + nombre + " es invï¿½lido.");
     	}
     }
     
     private void validarDescuento(Double descuento, String nombre) {
     	if (descuento == null || descuento < 0 || descuento > 100) {
-    		throw new IllegalArgumentException("El atributo " + nombre + " es inválido.");
+    		throw new IllegalArgumentException("El atributo " + nombre + " es invï¿½lido.");
     	}
     }
     

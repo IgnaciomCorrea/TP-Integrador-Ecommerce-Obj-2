@@ -1,6 +1,6 @@
 package pedido;
 
-import Catalogo.Vendible;
+import Catalogo.ItemVendible;
 import notificaciones.CambioEstadoEvento;
 import notificaciones.ObservadorPedido;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Pedido {
     private EstadoPedido estado;
-    private List<Vendible> vendibles;
+    private List<ItemVendible> vendibles;
     private List<ObservadorPedido> observadores;
 
     public Pedido() {
@@ -32,7 +32,7 @@ public class Pedido {
     }
 
     public double calcularPrecioTotal() {
-        return vendibles.stream().mapToDouble(Vendible::getPrecioFinal).sum();
+        return vendibles.stream().mapToDouble(ItemVendible::getPrecioFinal).sum();
     }
 
     public double calcularPesoTotal() {
@@ -40,11 +40,11 @@ public class Pedido {
         return 0;
     }
 
-    public void agregarVendible(Vendible vendible) {
+    public void agregarVendible(ItemVendible vendible) {
         estado.agregarVendible(this, vendible);
     }
 
-    public void quitarVendible(Vendible vendible) {
+    public void quitarVendible(ItemVendible vendible) {
         estado.quitarVendible(this, vendible);
     }
 
@@ -72,7 +72,7 @@ public class Pedido {
         return estado;
     }
 
-    public List<Vendible> getVendibles() {
+    public List<ItemVendible> getVendibles() {
         return vendibles;
     }
 }

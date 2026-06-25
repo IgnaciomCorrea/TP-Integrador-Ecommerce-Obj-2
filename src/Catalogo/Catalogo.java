@@ -20,8 +20,22 @@ public class Catalogo {
 		stock.add(stockVendible);
 	}
 	
-	// agregar funcionalidades de:
-	// recorrer lista para buscar X producto y si tiene stock disponible
+
+
+	// el Vendible debe existir en la lista stock.
+	public StockVendible buscarVendible(String sku) {
+		return stock.stream().filter(stockVendible -> stockVendible.getSku().equals(sku))
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("El producto con ID: " + sku + " no existe en el stock."));
+	}
+
+	// si tiene stock disponible
+	public boolean hayStockDisponible(String nombre, int cantidad) {
+		return this.buscarVendible(nombre).getStock() >= cantidad;
+	}
 	
-	// modificar el stock una vez se vende.
+	// modificar el stock una vez se vende
+	public void modificarStockDisponible(String nombre, int cantidad){
+		this.buscarVendible(nombre).setStock(cantidad);
+	}
 }

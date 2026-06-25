@@ -18,5 +18,6 @@ public class Sistema {
 	public List<StockVendible> filtrarCon(Criterio criterio){
 		return catalogo.getStock().stream().filter(stock -> criterio.validar(stock.getVendible())).collect(Collectors.toList());
 	}
-	
+
+
 }

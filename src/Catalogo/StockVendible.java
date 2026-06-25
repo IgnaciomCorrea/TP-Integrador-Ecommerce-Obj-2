@@ -23,6 +23,6 @@ public class StockVendible {
 	public Vendible getVendible() {
 		return this.vendible;
 	}
-
+	public String getSku(){ return vendible.getSku();}
 
 }

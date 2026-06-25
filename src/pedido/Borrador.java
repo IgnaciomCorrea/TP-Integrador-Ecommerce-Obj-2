@@ -1,16 +1,17 @@
 package pedido;
 
+import Catalogo.ItemVendible;
 import Catalogo.Vendible;
 import exceptions.ExcepcionGeneral;
 
 public class Borrador implements EstadoPedido {
     @Override
-    public void agregarVendible(Pedido pedido, Vendible vendible) {
+    public void agregarVendible(Pedido pedido, ItemVendible vendible) {
         pedido.getVendibles().add(vendible);
     }
 
     @Override
-    public void quitarVendible(Pedido pedido, Vendible vendible) {
+    public void quitarVendible(Pedido pedido, ItemVendible vendible) {
         pedido.getVendibles().remove(vendible);
     }
 
