@@ -40,32 +40,12 @@ public abstract class Vendible {
 
     public abstract Double getPrecioFinal();
 
-
-    private void validarAtributos(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento) {
-    	this.validarString(sku, "sku"); 
-    	this.validarString(nombre, "nombre");
-    	this.validarString(marca, "marca");
-    	this.validarCategoria(categoria, "categoria");
-    	this.validarString(descripcion, "descripcion");
-    	this.validarDescuento(descuento, "descuento");
-    }
-        
-    private void validarString(String texto, String nombre) {
-    	if (texto == null || texto.isBlank()) {
-    		throw new IllegalArgumentException("El atributo " + nombre + " es inv�lido.");
-    	}
+    public abstract Double getPeso();
+    // preguntar
+    public boolean validarVendible() {
+    	// return sku != null && nombre != null && ...  
+    	return true; // BORRAR!
     }
     
-    private void validarCategoria(Categoria categoria, String nombre) {
-    	if (categoria == null) {
-    		throw new IllegalArgumentException("El atributo " + nombre + " es inv�lido.");
-    	}
-    }
-    
-    private void validarDescuento(Double descuento, String nombre) {
-    	if (descuento == null || descuento < 0 || descuento > 100) {
-    		throw new IllegalArgumentException("El atributo " + nombre + " es inv�lido.");
-    	}
-    }
     
 }

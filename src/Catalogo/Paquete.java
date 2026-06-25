@@ -33,7 +33,8 @@ public class Paquete extends Vendible{
     public void eliminarVendible(ItemVendible vendible){
     	vendibles.remove(vendible);
     }
-
-    //ToDo es necesario que paquete calcule el peso de sus items.
-
+    
+    public Double getPeso() {
+    	return paquetes.stream().mapToDouble(paquete-> paquete.getPeso()).sum();
+    }
 }

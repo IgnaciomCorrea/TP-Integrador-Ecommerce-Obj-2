@@ -11,22 +11,8 @@ public class Producto extends Vendible{
 	// Constructor para el caso en que no se dé la cantidad de Producto que contiene, por default es uno.
     public Producto(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento,Double precio, Double peso) {
         super(sku, nombre, marca, categoria, descripcion, descuento);
-        //ToDo esto va?
-    	cantidad = 1;
         this.precio = precio;
         this.peso = peso;
-    }
-
-    public Double getPeso() {
-		return peso;
-	}
-
-	// Constructor para el caso en que sí se indica la cantidad de producto. 
-    public Producto(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento, int cantidad, Double precio) {
-    	super(sku, nombre, marca, categoria, descripcion, descuento);
-        //ToDo esto va?
-    	this.cantidad = cantidad;
-        this.precio = precio;
     }
 
     // getPrecioBase retorna el precio sin aplicar el descuento del Producto.
@@ -54,5 +40,7 @@ public class Producto extends Vendible{
     	atributos.add(new Atributo(nombre, valor));
     }
     
-   
+   public Double getPeso() {
+	   return this.peso;
+   }
 }
