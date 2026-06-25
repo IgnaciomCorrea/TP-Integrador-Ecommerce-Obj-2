@@ -39,8 +39,14 @@ public class Producto extends Vendible{
     public <T> void agregarAtributo(String nombre, T valor) {
     	atributos.add(new Atributo(nombre, valor));
     }
-    
-   public Double getPeso() {
+
+    public <T> T getAtributoNombre(String nombre) {
+        return atributos.stream()
+                .filter(atributo->atributo.getNombre().equals(nombre))
+                .map(atributo -> (T) atributo.getValor()).findFirst()
+                .orElse(null);
+    }
+    public Double getPeso() {
 	   return this.peso;
    }
 }

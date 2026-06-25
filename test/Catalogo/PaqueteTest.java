@@ -20,7 +20,8 @@ class PaqueteTest {
     private final Categoria CATEGORIA = Categoria.ELECTRONICA;
     private final String DESCRIPCION = "Kit completo para gaming";
     private final Double DESCUENTO = 15.0; // 15%
-    
+
+
     @BeforeEach
     void setUp() {
         paquete = new Paquete(SKU, NOMBRE, MARCA, CATEGORIA, DESCRIPCION, DESCUENTO);
@@ -207,6 +208,45 @@ class PaqueteTest {
         
         assertThrows(IllegalArgumentException.class, () -> {
             new Paquete(SKU, NOMBRE, null, CATEGORIA, DESCRIPCION, DESCUENTO);
+        });
+    }
+
+    @Test
+    @DisplayName("Debería validar nombre de Vendible en ItemVendible")
+        void testNombreVendible(){
+            Producto productoReal = new Producto(
+                    "PROD-003", "Teclado", "Logitech",
+                    Categoria.ELECTRONICA, "Teclado mec�nico",
+                    0.0, 100.0,
+                    0.2);
+            ItemVendible itemProducto = new ItemVendible(1, productoReal);
+
+            assertEquals("Teclado", itemProducto.getNombre());
+        }
+
+    @Test
+    @DisplayName("Debería funcionar con cantidad 1")
+    void testConstructorCantidadUno() {
+        Producto productoReal = new Producto(
+                "PROD-003", "Teclado", "Logitech",
+                Categoria.ELECTRONICA, "Teclado mec�nico",
+                0.0, 100.0,
+                0.2);
+        ItemVendible item = new ItemVendible(1, productoReal);
+        assertEquals(100.0, item.getPrecioBase(), 0.001);
+        assertEquals(0.2, item.getPeso(), 0.001);
+    }
+
+    @Test
+    @DisplayName("Debería lanzar excepción si la cantidad es 0")
+    void testConstructorCantidadCero() {
+        Producto productoReal = new Producto(
+                "PROD-003", "Teclado", "Logitech",
+                Categoria.ELECTRONICA, "Teclado mecánico",
+                0.0, 100.0, 0.2);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ItemVendible(0, productoReal);
         });
     }
 }

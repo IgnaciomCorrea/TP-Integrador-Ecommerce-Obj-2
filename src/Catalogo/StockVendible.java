@@ -23,4 +23,6 @@ public class StockVendible {
 	public Vendible getVendible() {
 		return this.vendible;
 	}
+
+
 }
