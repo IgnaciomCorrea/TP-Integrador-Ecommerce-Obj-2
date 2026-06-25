@@ -1,5 +1,7 @@
 package Catalogo;
 
+import pedido.Pedido;
+
 import java.util.ArrayList;
 
 import java.util.List;
@@ -19,23 +21,43 @@ public class Catalogo {
 	public void agregarVendible(StockVendible stockVendible) {
 		stock.add(stockVendible);
 	}
-	
 
+	// ===== OPERACIONES CON PEDIDOS =====
 
-	// el Vendible debe existir en la lista stock.
+	// Se valida la existencia de stock para el pedido y si existe, se resta.
+	public void armarPedido(Pedido pedido) {
+		if (this.verificarStockPedido(pedido)) {
+			this.modificarStockDisponible(pedido.getVendibles());
+		} else {
+			throw new IllegalArgumentException("No hay Stock disponible para tu pedido.");
+		}
+	}
+
+	// Se verifica la existencia de stock para todos los elementos (ItemVendible) del pedido.
+	public boolean verificarStockPedido(Pedido pedido){
+			return pedido.getVendibles().stream()
+					.allMatch(vendible -> this.hayStockDisponible(vendible.getSku(), vendible.getCantidad()));
+	}
+
+	// Evalúa que el stock del producto con el sku dado sea mayor o igual que la cantidadPedida.
+	public boolean hayStockDisponible(String sku, int cantidadPedida) {
+		return this.buscarVendible(sku).getStock() >= cantidadPedida;
+	}
+
+	// Retorna el StockVendible en la lista stock, con el mismo sku dado.
 	public StockVendible buscarVendible(String sku) {
 		return stock.stream().filter(stockVendible -> stockVendible.getSku().equals(sku))
 				.findFirst()
 				.orElseThrow(() -> new RuntimeException("El producto con ID: " + sku + " no existe en el stock."));
 	}
 
-	// si tiene stock disponible
-	public boolean hayStockDisponible(String nombre, int cantidad) {
-		return this.buscarVendible(nombre).getStock() >= cantidad;
-	}
-	
-	// modificar el stock una vez se vende
-	public void modificarStockDisponible(String nombre, int cantidad){
-		this.buscarVendible(nombre).setStock(cantidad);
+
+	// Modifica el stock de los items vendidos.
+	private void modificarStockDisponible(List<ItemVendible> itemVendibles) {
+		for (ItemVendible item : itemVendibles) {
+			StockVendible stockVendible = buscarVendible(item.getSku());
+			int nuevoStock = stockVendible.getStock() - item.getCantidad();
+			stockVendible.setStock(nuevoStock);
+		}
 	}
 }

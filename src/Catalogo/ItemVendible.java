@@ -23,7 +23,15 @@ public class ItemVendible {
 	public Double getPeso() {
 		return this.vendible.getPeso() * cantidad;
 	}
-	
+
+	public String getSku(){
+		return vendible.getSku();
+	}
+
+	public int getCantidad(){
+		return this.cantidad;
+	}
+
 	private void validarCantidad(int cantidad) {
 		if (cantidad < 1) {
 			throw new IllegalArgumentException("La cantidad debe ser 1 o más!");

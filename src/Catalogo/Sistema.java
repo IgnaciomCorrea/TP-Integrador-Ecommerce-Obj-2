@@ -19,5 +19,8 @@ public class Sistema {
 		return catalogo.getStock().stream().filter(stock -> criterio.validar(stock.getVendible())).collect(Collectors.toList());
 	}
 
+	// crea la interfaz
+
+	//
 
 }
