@@ -14,7 +14,7 @@ class ProductoTest {
     private final String NOMBRE = "Laptop Gaming";
     private final String MARCA = "TechCorp";
     private final Categoria CATEGORIA = Categoria.ELECTRONICA;
-    private final String DESCRIPCION = "Laptop de ï¿½ltima generaciï¿½n";
+    private final String DESCRIPCION = "Laptop de última generacion";
     private final Double PRECIO = 1500.0;
     private final Double DESCUENTO = 10.0; // 10%
     
@@ -24,7 +24,7 @@ class ProductoTest {
     }
     
     @Test
-    @DisplayName("Deberï¿½a crear un producto con todos sus atributos correctamente")
+    @DisplayName("Deberia crear un producto con todos sus atributos correctamente")
     void testCrearProducto() {
         assertNotNull(producto);
         // assertEquals(SKU, producto.getSKU());
@@ -34,31 +34,31 @@ class ProductoTest {
     }
     
     @Test
-    @DisplayName("Deberï¿½a calcular correctamente el precio base")
+    @DisplayName("Deberia calcular correctamente el precio base")
     void testGetPrecioBase() {
         assertEquals(PRECIO, producto.getPrecioBase());
     }
     
     @Test
-    @DisplayName("Deberï¿½a calcular correctamente el precio final con descuento")
+    @DisplayName("Deberia calcular correctamente el precio final con descuento")
     void testGetPrecioFinalConDescuento() {
         Double precioEsperado = PRECIO - (PRECIO * DESCUENTO / 100); // 1500 - 150 = 1350
         assertEquals(precioEsperado, producto.getPrecioFinal(), 0.001);
     }
     
     @Test
-    @DisplayName("Deberï¿½a devolver el precio base cuando el descuento es 0%")
+    @DisplayName("Deberia devolver el precio base cuando el descuento es 0%")
     void testGetPrecioFinalSinDescuento() {
         Producto productoSinDescuento = new Producto(
             "PROD-002", "Mouse", "TechCorp", 
-            Categoria.ELECTRONICA, "Mouse inalï¿½mbrico", 
+            Categoria.ELECTRONICA, "Mouse inalambrico", 
             0.0, 50.0,
                 0.2);
         assertEquals(50.0, productoSinDescuento.getPrecioFinal(), 0.001);
     }
     
     @Test
-    @DisplayName("Deberï¿½a validar que los atributos obligatorios no sean nulos o vacï¿½os")
+    @DisplayName("Deberia validar que los atributos obligatorios no sean nulos o vacï¿½os")
     void testValidacionAtributos() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Producto(null, NOMBRE, MARCA, CATEGORIA, DESCRIPCION, DESCUENTO, PRECIO, 0.2);
@@ -74,7 +74,7 @@ class ProductoTest {
     }
     
     @Test
-    @DisplayName("Deberï¿½a validar que el descuento estï¿½ entre 0 y 100")
+    @DisplayName("Deberia validar que el descuento esta entre 0 y 100")
     void testValidacionDescuento() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Producto(SKU, NOMBRE, MARCA, CATEGORIA, DESCRIPCION, -10.0, PRECIO, 0.2);
@@ -90,7 +90,7 @@ class ProductoTest {
     }
     
     @Test
-    @DisplayName("Deberï¿½a validar la categorï¿½a no nula")
+    @DisplayName("Deberia validar la categoria no nula")
     void testValidacionCategoria() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Producto(SKU, NOMBRE, MARCA, null, DESCRIPCION, DESCUENTO, PRECIO, 0.2);
@@ -98,7 +98,7 @@ class ProductoTest {
     }
     
     @Test
-    @DisplayName("Deberï¿½a permitir modificar el precio")
+    @DisplayName("Deberia permitir modificar el precio")
     void testSetPrecio() {
         Double nuevoPrecio = 2000.0;
         producto.setPrecio(nuevoPrecio);
@@ -106,7 +106,7 @@ class ProductoTest {
     }
     
     @Test
-    @DisplayName("Deberï¿½a validar la existencia de atributos dinï¿½micos")
+    @DisplayName("Deberia validar la existencia de atributos dinamicos")
     void testValidarAtributoDinamico() {
         assertFalse(producto.validarAtributoDinamico("color"));
         
@@ -115,7 +115,7 @@ class ProductoTest {
     }
     
     @Test
-    @DisplayName("Deberï¿½a agregar atributos dinï¿½micos de diferentes tipos")
+    @DisplayName("Deberia agregar atributos dinamicos de diferentes tipos")
     void testAgregarAtributosDinamicos() {
         producto.agregarAtributo("peso", 2.5);        // Double
         producto.agregarAtributo("garantia", 12);     // Integer

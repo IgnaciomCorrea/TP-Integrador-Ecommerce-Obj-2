@@ -35,6 +35,6 @@ public class Paquete extends Vendible{
     }
     
     public Double getPeso() {
-    	return vendibles.stream().mapToDouble(paquete-> paquete.getPeso()).sum();
+    	return vendibles.stream().mapToDouble(vendible-> vendible.getPeso()).sum();
     }
 }

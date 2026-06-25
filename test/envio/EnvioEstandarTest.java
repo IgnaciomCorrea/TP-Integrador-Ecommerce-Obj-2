@@ -29,9 +29,9 @@ class EnvioEstandarTest {
         pedido = new Pedido();
         // Agregar productos con peso
         Producto p1 = new Producto("SKU1", "Teclado", "Logitech", Categoria.ELECTRONICA,
-                "Teclado mecánico", 0.0, 100.0, 0.5);
+                "Teclado mecanico", 0.0, 100.0, 0.5);
         Producto p2 = new Producto("SKU2", "Mouse", "Logitech", Categoria.ELECTRONICA,
-                "Mouse inalámbrico", 0.0, 50.0, 0.2);
+                "Mouse inalambrico", 0.0, 50.0, 0.2);
         pedido.agregarVendible(p1);
         pedido.agregarVendible(p2);
     }
