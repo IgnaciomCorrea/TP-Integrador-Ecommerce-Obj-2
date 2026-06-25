@@ -34,9 +34,12 @@ public abstract class Vendible {
 
     public abstract Double getPrecioFinal();
 
+    public abstract Double getPeso();
     // preguntar
     public boolean validarVendible() {
     	// return sku != null && nombre != null && ...  
     	return true; // BORRAR!
     }
+    
+    
 }

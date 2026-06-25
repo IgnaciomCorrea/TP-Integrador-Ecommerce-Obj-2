@@ -41,4 +41,8 @@ public class Paquete extends Vendible{
                        .findFirst()                                         
                        .orElse(null);
     }
+    
+    public Double getPeso() {
+    	return paquetes.stream().mapToDouble(paquete-> paquete.getPeso()).sum();
+    }
 }
