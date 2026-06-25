@@ -13,7 +13,7 @@ public class EnvioEstandar implements MetodoEnvio {
 
     @Override
     public double calcularCosto(Pedido pedido, Direccion direccion, Sucursal sucursal) {
-        double peso = 0.7f;//pedido.calcularPesoTotal(); ToDo
+        double peso = pedido.calcularPesoTotal();
         return correo.estimarEnvio((float) peso, direccion);
     }
 

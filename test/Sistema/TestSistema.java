@@ -7,6 +7,8 @@ import CriterioBusqueda.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import sistema.Sistema;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;

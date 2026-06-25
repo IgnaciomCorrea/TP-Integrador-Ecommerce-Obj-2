@@ -1,18 +1,18 @@
 package pedido;
 
 import Catalogo.ItemVendible;
-import Catalogo.Vendible;
 import exceptions.ExcepcionGeneral;
 
 public class Confirmado implements EstadoPedido {
+
     @Override
     public void agregarVendible(Pedido pedido, ItemVendible vendible) {
-        throw new ExcepcionGeneral("No se puede agregar vendibles en este estado");
+        throw new ExcepcionGeneral("No se puede agregar ítems a un pedido confirmado");
     }
 
     @Override
     public void quitarVendible(Pedido pedido, ItemVendible vendible) {
-        throw new ExcepcionGeneral("No se puede quitar vendibles en este estado");
+        throw new ExcepcionGeneral("No se puede quitar ítems de un pedido confirmado");
     }
 
     @Override
@@ -22,16 +22,15 @@ public class Confirmado implements EstadoPedido {
 
     @Override
     public void cancelar(Pedido pedido) {
-        // Reembolso total (productos + envío aún no generado), reponer stock
-        //pedido.reponerStock();
-        //pedido.generarNotaCredito(pedido.calcularTotal() + pedido.calcularCostoEnvio());
+        pedido.reponerStock();
+        double total = pedido.calcularPrecioTotal() + pedido.calcularCostoEnvio();
+        pedido.generarNotaCredito(total, "Cancelación desde estado Confirmado");
         pedido.setEstado(new Cancelado());
     }
 
     @Override
     public void pasarAEnPreparacion(Pedido pedido) {
-        // Al pasar a preparación, se decrementa el stock (si no se hizo antes)
-        //pedido.decrementarStock();
+        // El stock ya fue decrementado al confirmar, así que solo se cambia de estado
         pedido.setEstado(new EnPreparacion());
     }
 

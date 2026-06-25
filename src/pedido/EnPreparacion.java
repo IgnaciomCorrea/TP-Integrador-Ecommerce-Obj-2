@@ -1,18 +1,18 @@
 package pedido;
 
 import Catalogo.ItemVendible;
-import Catalogo.Vendible;
 import exceptions.ExcepcionGeneral;
 
 public class EnPreparacion implements EstadoPedido {
+
     @Override
     public void agregarVendible(Pedido pedido, ItemVendible vendible) {
-        throw new ExcepcionGeneral("No se puede modificar un pedido este estado");
+        throw new ExcepcionGeneral("No se puede modificar un pedido en preparación");
     }
 
     @Override
     public void quitarVendible(Pedido pedido, ItemVendible vendible) {
-        throw new ExcepcionGeneral("No se puede modificar un pedido este estado");
+        throw new ExcepcionGeneral("No se puede modificar un pedido en preparación");
     }
 
     @Override
@@ -22,15 +22,15 @@ public class EnPreparacion implements EstadoPedido {
 
     @Override
     public void cancelar(Pedido pedido) {
-        // Se repone stock y se reembolsa productos + envío
-        //pedido.reponerStock();
-        //pedido.generarNotaCredito(pedido.calcularTotal() + pedido.calcularCostoEnvio());
+        pedido.reponerStock();
+        double total = pedido.calcularPrecioTotal() + pedido.calcularCostoEnvio();
+        pedido.generarNotaCredito(total, "Cancelación desde estado EnPreparacion");
         pedido.setEstado(new Cancelado());
     }
 
     @Override
     public void pasarAEnPreparacion(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede pasar del estado actual a este");
+        throw new ExcepcionGeneral("El pedido ya está en preparación");
     }
 
     @Override
@@ -40,6 +40,6 @@ public class EnPreparacion implements EstadoPedido {
 
     @Override
     public void pasarAEntregado(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede pasar del estado actual a este");
+        throw new ExcepcionGeneral("Debe estar en enviado para pasar a entregado");
     }
 }
