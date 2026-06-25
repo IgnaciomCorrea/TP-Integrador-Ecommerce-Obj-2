@@ -8,7 +8,7 @@ public class Producto extends Vendible{
 	private Double precio;
 	private Double peso;
 
-	// Constructor para el caso en que no se dé la cantidad de Producto que contiene, por default es uno.
+	// Constructor para el caso en que no se dÃ© la cantidad de Producto que contiene, por default es uno.
     public Producto(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento,Double precio, Double peso) {
         super(sku, nombre, marca, categoria, descripcion, descuento);
         this.precio = precio;
@@ -31,7 +31,7 @@ public class Producto extends Vendible{
     	return this.getPrecioBase() - (this.getPrecioBase() * this.descuento / 100 );
     }
     
-    // Busca un atributo dinámico, en la lista atributos, con el nombre dado para validar su existencia.
+    // Busca un atributo dinÃ¡mico, en la lista atributos, con el nombre dado para validar su existencia.
     public boolean validarAtributoDinamico(String nombreBuscado) {
     	return this.atributos.stream().anyMatch(atributo->atributo.getNombre().equals(nombreBuscado));
     }

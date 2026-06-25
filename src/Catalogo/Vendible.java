@@ -1,14 +1,16 @@
 package Catalogo;
+
 public abstract class Vendible {
     private String SKU;
     private String nombre;
     private String marca;
     private Categoria categoria;
     private String descripcion;
-    public Double descuento;
-    protected int cantidad;
+    protected Double descuento;
+    private Double peso;
 
     public Vendible(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento) {
+    	this.validarAtributos(sku, nombre, marca, categoria, descripcion, descuento);
     	this.SKU = sku;
     	this.nombre = nombre;
     	this.marca = marca;
@@ -30,6 +32,10 @@ public abstract class Vendible {
         return categoria;
     }
 
+    public Double getPeso(){
+        return peso;
+    }
+    
     public abstract Double getPrecioBase();
 
     public abstract Double getPrecioFinal();
