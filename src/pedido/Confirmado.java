@@ -22,7 +22,6 @@ public class Confirmado implements EstadoPedido {
 
     @Override
     public void cancelar(Pedido pedido) {
-        pedido.reponerStock();
         double total = pedido.calcularPrecioTotal() + pedido.calcularCostoEnvio();
         pedido.generarNotaCredito(total, "Cancelación desde estado Confirmado");
         pedido.setEstado(new Cancelado());
@@ -30,7 +29,6 @@ public class Confirmado implements EstadoPedido {
 
     @Override
     public void pasarAEnPreparacion(Pedido pedido) {
-        // El stock ya fue decrementado al confirmar, así que solo se cambia de estado
         pedido.setEstado(new EnPreparacion());
     }
 

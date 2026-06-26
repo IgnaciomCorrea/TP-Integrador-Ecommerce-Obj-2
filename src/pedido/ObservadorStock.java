@@ -4,7 +4,6 @@ import Catalogo.Catalogo;
 import notificaciones.CambioEstadoEvento;
 import notificaciones.ObservadorPedido;
 
-
 public class ObservadorStock implements ObservadorPedido {
     private Catalogo catalogo;
 
@@ -14,12 +13,17 @@ public class ObservadorStock implements ObservadorPedido {
 
     @Override
     public void onCambioEstado(CambioEstadoEvento evento, Pedido pedido) {
-        if (evento.getEstadoNuevo() instanceof Confirmado) {
-            catalogo.modificarStockDisponible(pedido.getVendibles());
+        EstadoPedido nuevo = evento.getEstadoNuevo();
+        EstadoPedido anterior = evento.getEstadoAnterior();
+
+        if (nuevo instanceof Confirmado) {
+            catalogo.restarStock(pedido.getVendibles());
         }
-        if (evento.getEstadoNuevo() instanceof Cancelado
-                && evento.getEstadoAnterior() instanceof Confirmado) {
-            // catalogo.reponerStock(pedido.getVendibles());
+
+        if (nuevo instanceof Cancelado) {
+            if (anterior instanceof Confirmado || anterior instanceof EnPreparacion) {
+                catalogo.reponerStock(pedido.getVendibles());
+            }
         }
     }
 }

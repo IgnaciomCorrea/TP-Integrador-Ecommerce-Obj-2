@@ -63,7 +63,6 @@ class PedidoNotificacionTest {
     void transicionDeEstado_debeNotificarObservadores() {
         pedido.agregarObservador(observadorMock);
 
-        pedido.agregarVendible(mock(Catalogo.Vendible.class));
         pedido.confirmarPedido();
 
         verify(observadorMock, times(1)).onCambioEstado(any(CambioEstadoEvento.class), eq(pedido));

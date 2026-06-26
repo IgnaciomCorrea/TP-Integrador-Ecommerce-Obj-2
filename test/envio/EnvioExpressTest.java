@@ -1,15 +1,14 @@
 package envio;
 
-import Catalogo.Categoria;
-import Catalogo.Producto;
+import Catalogo.ItemVendible;
 import direccion.Direccion;
+import pedido.Pedido;
+import sucursal.Sucursal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pedido.Pedido;
-import sucursal.Sucursal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -20,6 +19,12 @@ class EnvioExpressTest {
     @Mock
     private EnvioExpressCalculadora calculadoraMock;
 
+    @Mock
+    private ItemVendible itemMock1;
+
+    @Mock
+    private ItemVendible itemMock2;
+
     private EnvioExpress envioExpress;
     private Pedido pedido;
 
@@ -27,12 +32,13 @@ class EnvioExpressTest {
     void setUp() {
         envioExpress = new EnvioExpress(calculadoraMock);
         pedido = new Pedido();
-        Producto p1 = new Producto("SKU1", "Teclado", "Logitech", Categoria.ELECTRONICA,
-                "teclado mecanico", 0.0, 100.0, 0.5);
-        Producto p2 = new Producto("SKU2", "Mouse", "Logitech", Categoria.ELECTRONICA,
-                "mouse nuevo", 0.0, 50.0, 0.2);
-        pedido.agregarVendible(p1);
-        pedido.agregarVendible(p2);
+
+        // Configurar mocks para calcular precio total
+        when(itemMock1.getPrecioFinal()).thenReturn(100.0);
+        when(itemMock2.getPrecioFinal()).thenReturn(50.0);
+
+        pedido.agregarVendible(itemMock1);
+        pedido.agregarVendible(itemMock2);
     }
 
     @Test
@@ -51,6 +57,7 @@ class EnvioExpressTest {
     void calcularTiempo_debeRetornar1Dia() {
         Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
         Sucursal sucursal = mock(Sucursal.class);
+
         int tiempo = envioExpress.calcularTiempo(pedido, direccion, sucursal);
         assertEquals(1, tiempo);
     }

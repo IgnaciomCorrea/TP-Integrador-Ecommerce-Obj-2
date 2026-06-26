@@ -5,6 +5,7 @@ import notificaciones.CambioEstadoEvento;
 import notificaciones.ObservadorPedido;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Pedido {
@@ -77,45 +78,24 @@ public class Pedido {
         return vendibles;
     }
 
-    public void decrementarStock() {
-        // acá implementar lógica de decremento de stock
-        System.out.println("Stock decrementado para el pedido.");
-    }
-
-    /**
-     * Repone el stock de todos los productos del pedido.
-     * Implementación pendiente.
-     */
-    public void reponerStock() {
-        // acá implementar lógica de reposición de stock
-        System.out.println("Stock repuesto para el pedido.");
-    }
-
-    /**
-     * Genera una nota de crédito por el monto especificado.
-     * Implementación pendiente.
-     */
     public void generarNotaCredito(double monto, String motivo) {
         if (this.notaCredito != null) {
             throw new IllegalStateException("El pedido ya tiene una nota de crédito asociada");
         }
         this.notaCredito = NotaCredito.crear(this, monto, motivo);
-        // Aquí se podría registrar la nota en un repositorio o sistema contable
         System.out.println("Nota de crédito generada: " + this.notaCredito);
     }
 
-    /**
-     * Devuelve la nota de crédito asociada (puede ser null si no se ha generado).
-     */
+
     public NotaCredito getNotaCredito() {
         return notaCredito;
     }
-    /**
-     * Calcula el costo de envío según la estrategia seleccionada.
-     * Este método debería delegar en el módulo de envíos (Strategy).
-     * Por ahora devuelve un valor fijo como placeholder.
-     */
+
     public double calcularCostoEnvio() {
         return 0; // placeholder
+    }
+
+    public List<ObservadorPedido> getObservadores() {
+        return new ArrayList<>(observadores);
     }
 }

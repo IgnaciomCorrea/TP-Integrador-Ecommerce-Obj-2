@@ -22,7 +22,6 @@ public class EnPreparacion implements EstadoPedido {
 
     @Override
     public void cancelar(Pedido pedido) {
-        pedido.reponerStock();
         double total = pedido.calcularPrecioTotal() + pedido.calcularCostoEnvio();
         pedido.generarNotaCredito(total, "Cancelación desde estado EnPreparacion");
         pedido.setEstado(new Cancelado());

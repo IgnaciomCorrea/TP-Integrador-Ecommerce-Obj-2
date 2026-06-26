@@ -1,7 +1,6 @@
 package envio;
 
-import Catalogo.Categoria;
-import Catalogo.Producto;
+import Catalogo.ItemVendible;
 import direccion.Direccion;
 import pedido.Pedido;
 import sucursal.Sucursal;
@@ -20,6 +19,12 @@ class EnvioEstandarTest {
     @Mock
     private CorreoArgentina correoMock;
 
+    @Mock
+    private ItemVendible itemMock1;
+
+    @Mock
+    private ItemVendible itemMock2;
+
     private EnvioEstandar envioEstandar;
     private Pedido pedido;
 
@@ -27,17 +32,17 @@ class EnvioEstandarTest {
     void setUp() {
         envioEstandar = new EnvioEstandar(correoMock);
         pedido = new Pedido();
-        // Agregar productos con peso
-        Producto p1 = new Producto("SKU1", "Teclado", "Logitech", Categoria.ELECTRONICA,
-                "Teclado mecanico", 0.0, 100.0, 0.5);
-        Producto p2 = new Producto("SKU2", "Mouse", "Logitech", Categoria.ELECTRONICA,
-                "Mouse inalambrico", 0.0, 50.0, 0.2);
-        pedido.agregarVendible(p1);
-        pedido.agregarVendible(p2);
+
+        // Configurar mocks para calcular peso total
+        when(itemMock1.getPeso()).thenReturn(0.5);
+        when(itemMock2.getPeso()).thenReturn(0.2);
+
+        pedido.agregarVendible(itemMock1);
+        pedido.agregarVendible(itemMock2);
     }
 
     @Test
-    void calcularCosto_debeUsarCorreoArgentinaConPesoYDireccion() {
+    void calcularCosto_debeUsarCorreoArgentinaConPesoTotalYDireccion() {
         Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
         Sucursal sucursal = mock(Sucursal.class);
 
@@ -53,6 +58,7 @@ class EnvioEstandarTest {
     void calcularTiempo_debeRetornar5Dias() {
         Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
         Sucursal sucursal = mock(Sucursal.class);
+
         int tiempo = envioEstandar.calcularTiempo(pedido, direccion, sucursal);
         assertEquals(5, tiempo);
     }
