@@ -1,5 +1,6 @@
 package sistema;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,6 +10,8 @@ import Catalogo.StockVendible;
 import CriterioBusqueda.Criterio;
 import pedido.ObservadorStock;
 import pedido.Pedido;
+import reportes.ReporteProductosMasVendidos;
+import Catalogo.ItemVendible;
 
 public class Sistema {
 
@@ -40,5 +43,18 @@ public class Sistema {
 		} else {
 			pedido.cancelarPedido();
 		}
+	}
+
+	public ReporteProductosMasVendidos generarReporteProductosMasVendidos(LocalDate inicio, LocalDate fin) {
+		ReporteProductosMasVendidos visitor = new ReporteProductosMasVendidos(inicio, fin);
+		for (Pedido pedido : pedidos) {
+			// Asumimos que Pedido tiene getFecha()
+			if (pedido.getFecha().isAfter(inicio) && pedido.getFecha().isBefore(fin)) {
+				for (ItemVendible item : pedido.getVendibles()) {
+					item.accept(visitor);
+				}
+			}
+		}
+		return visitor;
 	}
 }

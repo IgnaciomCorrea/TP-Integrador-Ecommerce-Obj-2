@@ -1,6 +1,8 @@
 package Catalogo;
 
 
+import reportes.ReportVisitor;
+
 public class ItemVendible {
 	
 	private int cantidad;
@@ -34,7 +36,15 @@ public class ItemVendible {
 
 	private void validarCantidad(int cantidad) {
 		if (cantidad < 1) {
-			throw new IllegalArgumentException("La cantidad debe ser 1 o más!");
+			throw new IllegalArgumentException("La cantidad debe ser 1 o mï¿½s!");
+		}
+	}
+
+	public void accept(ReportVisitor visitor) {
+		if (vendible instanceof Producto) {
+			visitor.visitProducto((Producto) vendible, this.cantidad, this.getPrecioFinal());
+		} else if (vendible instanceof Paquete) {
+			visitor.visitPaquete((Paquete) vendible, this.cantidad, this.getPrecioFinal());
 		}
 	}
 }

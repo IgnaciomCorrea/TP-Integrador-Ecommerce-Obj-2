@@ -4,6 +4,7 @@ import Catalogo.ItemVendible;
 import notificaciones.CambioEstadoEvento;
 import notificaciones.ObservadorPedido;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,12 +14,14 @@ public class Pedido {
     private List<ItemVendible> vendibles;
     private List<ObservadorPedido> observadores;
     private NotaCredito notaCredito;
+    private LocalDate fecha;
 
     public Pedido() {
         this.estado = new Borrador();
         this.vendibles = new ArrayList<>();
         this.observadores = new ArrayList<>();
         this.notaCredito = null;
+        this.fecha = LocalDate.now();
     }
 
     public void agregarObservador(ObservadorPedido observador) {
@@ -86,6 +89,9 @@ public class Pedido {
         System.out.println("Nota de crédito generada: " + this.notaCredito);
     }
 
+    public LocalDate getFecha() {
+        return fecha;
+    }
 
     public NotaCredito getNotaCredito() {
         return notaCredito;
