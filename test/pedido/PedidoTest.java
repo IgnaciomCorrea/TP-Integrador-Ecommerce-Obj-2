@@ -266,9 +266,6 @@ class PedidoTest {
 
         @Test
         void alConfirmarPedido_debeLlamarARestarStock() {
-            when(itemMock1.getSku()).thenReturn("SKU001");
-            when(itemMock1.getCantidad()).thenReturn(2);
-
             pedidoConStockObserver.agregarVendible(itemMock1);
             pedidoConStockObserver.confirmarPedido();
 
@@ -280,9 +277,6 @@ class PedidoTest {
 
         @Test
         void alCancelarDesdeConfirmado_debeLlamarAReponerStock() {
-            when(itemMock1.getSku()).thenReturn("SKU001");
-            when(itemMock1.getCantidad()).thenReturn(2);
-
             pedidoConStockObserver.agregarVendible(itemMock1);
             pedidoConStockObserver.confirmarPedido();
             pedidoConStockObserver.cancelarPedido();
@@ -292,9 +286,6 @@ class PedidoTest {
 
         @Test
         void alCancelarDesdeEnPreparacion_debeLlamarAReponerStock() {
-            when(itemMock1.getSku()).thenReturn("SKU001");
-            when(itemMock1.getCantidad()).thenReturn(2);
-
             pedidoConStockObserver.agregarVendible(itemMock1);
             pedidoConStockObserver.confirmarPedido();
             pedidoConStockObserver.pasarAEnPreparacion();
@@ -312,9 +303,6 @@ class PedidoTest {
 
         @Test
         void alCancelarDesdeEnviado_noDebeLlamarAReponerStock() {
-            when(itemMock1.getSku()).thenReturn("SKU001");
-            when(itemMock1.getCantidad()).thenReturn(2);
-
             pedidoConStockObserver.agregarVendible(itemMock1);
             pedidoConStockObserver.confirmarPedido();
             pedidoConStockObserver.pasarAEnPreparacion();
@@ -326,11 +314,6 @@ class PedidoTest {
 
         @Test
         void alConfirmarPedido_conVariosItems_debeLlamarARestarStockConTodos() {
-            when(itemMock1.getSku()).thenReturn("SKU001");
-            when(itemMock1.getCantidad()).thenReturn(2);
-            when(itemMock2.getSku()).thenReturn("SKU002");
-            when(itemMock2.getCantidad()).thenReturn(3);
-
             pedidoConStockObserver.agregarVendible(itemMock1);
             pedidoConStockObserver.agregarVendible(itemMock2);
             pedidoConStockObserver.confirmarPedido();
