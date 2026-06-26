@@ -16,7 +16,7 @@ public class Paquete extends Vendible{
     @Override
     public Double getPrecioBase() {
     	return vendibles.stream()
-    					.mapToDouble(vendible->vendible.getPrecioBase())
+    					.mapToDouble(vendible->vendible.getPrecioFinal())
         				.sum();
     }
 

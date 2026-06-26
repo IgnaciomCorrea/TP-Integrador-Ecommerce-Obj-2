@@ -29,6 +29,7 @@ public class Catalogo {
 		if (this.verificarStockPedido(pedido)) {
 			this.modificarStockDisponible(pedido.getVendibles());
 		} else {
+			// agregar cambio de estado del pedido a Cancelado
 			throw new IllegalArgumentException("No hay Stock disponible para tu pedido.");
 		}
 	}
@@ -53,7 +54,7 @@ public class Catalogo {
 
 
 	// Modifica el stock de los items vendidos.
-	private void modificarStockDisponible(List<ItemVendible> itemVendibles) {
+	public void modificarStockDisponible(List<ItemVendible> itemVendibles) {
 		for (ItemVendible item : itemVendibles) {
 			StockVendible stockVendible = buscarVendible(item.getSku());
 			int nuevoStock = stockVendible.getStock() - item.getCantidad();
