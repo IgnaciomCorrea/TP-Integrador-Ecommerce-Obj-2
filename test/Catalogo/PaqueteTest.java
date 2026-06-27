@@ -49,9 +49,9 @@ class PaqueteTest {
     @DisplayName("Deber�a calcular correctamente el precio base de un paquete con items")
     void testGetPrecioBaseConItems() {
         // Configurar mocks de ItemVendible (ya incluyen la cantidad en su precio)
-        when(mockItem1.getPrecioBase()).thenReturn(500.0);  // 1 x 500
-        when(mockItem2.getPrecioBase()).thenReturn(600.0);  // 2 x 300
-        when(mockItem3.getPrecioBase()).thenReturn(400.0);  // 1 x 400
+        when(mockItem1.getPrecioFinal()).thenReturn(500.0);  // 1 x 500
+        when(mockItem2.getPrecioFinal()).thenReturn(600.0);  // 2 x 300
+        when(mockItem3.getPrecioFinal()).thenReturn(400.0);  // 1 x 400
         
         // Agregar items al paquete
         paquete.agregarVendible(mockItem1);
@@ -62,17 +62,17 @@ class PaqueteTest {
         assertEquals(1500.0, paquete.getPrecioBase(), 0.001);
         
         // Verificar que se llamaron los m�todos de los mocks
-        verify(mockItem1, times(1)).getPrecioBase();
-        verify(mockItem2, times(1)).getPrecioBase();
-        verify(mockItem3, times(1)).getPrecioBase();
+        verify(mockItem1, times(1)).getPrecioFinal();
+        verify(mockItem2, times(1)).getPrecioFinal();
+        verify(mockItem3, times(1)).getPrecioFinal();
     }
     
     @Test
     @DisplayName("Deber�a calcular correctamente el precio final de un paquete con descuento")
     void testGetPrecioFinalConDescuento() {
-        when(mockItem1.getPrecioBase()).thenReturn(500.0);
-        when(mockItem2.getPrecioBase()).thenReturn(600.0);
-        when(mockItem3.getPrecioBase()).thenReturn(400.0);
+        when(mockItem1.getPrecioFinal()).thenReturn(500.0);
+        when(mockItem2.getPrecioFinal()).thenReturn(600.0);
+        when(mockItem3.getPrecioFinal()).thenReturn(400.0);
         
         paquete.agregarVendible(mockItem1);
         paquete.agregarVendible(mockItem2);
@@ -92,8 +92,8 @@ class PaqueteTest {
             0.0
         );
         
-        when(mockItem1.getPrecioBase()).thenReturn(100.0);
-        when(mockItem2.getPrecioBase()).thenReturn(50.0);
+        when(mockItem1.getPrecioFinal()).thenReturn(100.0);
+        when(mockItem2.getPrecioFinal()).thenReturn(50.0);
         
         paqueteSinDescuento.agregarVendible(mockItem1);
         paqueteSinDescuento.agregarVendible(mockItem2);
@@ -105,9 +105,9 @@ class PaqueteTest {
     @DisplayName("Deber�a calcular correctamente el precio de un paquete anidado (Composite)")
     void testGetPrecioBaseConPaqueteAnidado() {
         // Configurar mocks
-        when(mockItem1.getPrecioBase()).thenReturn(500.0);
-        when(mockItem2.getPrecioBase()).thenReturn(300.0);
-        when(mockSubPaqueteItem.getPrecioBase()).thenReturn(800.0);
+        when(mockItem1.getPrecioFinal()).thenReturn(500.0);
+        when(mockItem2.getPrecioFinal()).thenReturn(300.0);
+        when(mockSubPaqueteItem.getPrecioFinal()).thenReturn(800.0);
         
         // Agregar items al paquete principal
         paquete.agregarVendible(mockItem1);
@@ -117,18 +117,18 @@ class PaqueteTest {
         // Precio total esperado: 500 + 300 + 800 = 1600
         assertEquals(1600.0, paquete.getPrecioBase(), 0.001);
         
-        verify(mockItem1).getPrecioBase();
-        verify(mockItem2).getPrecioBase();
-        verify(mockSubPaqueteItem).getPrecioBase();
+        verify(mockItem1).getPrecioFinal();
+        verify(mockItem2).getPrecioFinal();
+        verify(mockSubPaqueteItem).getPrecioFinal();
     }
     
     @Test
     @DisplayName("Deber�a calcular el precio final de un paquete anidado aplicando descuentos")
     void testGetPrecioFinalConPaqueteAnidado() {
         // Configurar mocks
-        when(mockItem1.getPrecioBase()).thenReturn(500.0);
-        when(mockItem2.getPrecioBase()).thenReturn(300.0);
-        when(mockSubPaqueteItem.getPrecioBase()).thenReturn(800.0);
+        when(mockItem1.getPrecioFinal()).thenReturn(500.0);
+        when(mockItem2.getPrecioFinal()).thenReturn(300.0);
+        when(mockSubPaqueteItem.getPrecioFinal()).thenReturn(800.0);
         
         // Agregar al paquete principal
         paquete.agregarVendible(mockItem1);
@@ -147,12 +147,12 @@ class PaqueteTest {
         assertEquals(0.0, paquete.getPrecioBase(), 0.001);
         
         // Agregar un item
-        when(mockItem1.getPrecioBase()).thenReturn(500.0);
+        when(mockItem1.getPrecioFinal()).thenReturn(500.0);
         paquete.agregarVendible(mockItem1);
         assertEquals(500.0, paquete.getPrecioBase(), 0.001);
         
         // Agregar otro item
-        when(mockItem2.getPrecioBase()).thenReturn(300.0);
+        when(mockItem2.getPrecioFinal()).thenReturn(300.0);
         paquete.agregarVendible(mockItem2);
         assertEquals(800.0, paquete.getPrecioBase(), 0.001);
         
@@ -233,7 +233,7 @@ class PaqueteTest {
                 0.0, 100.0,
                 0.2);
         ItemVendible item = new ItemVendible(1, productoReal);
-        assertEquals(100.0, item.getPrecioBase(), 0.001);
+        assertEquals(100.0, item.getPrecioFinal(), 0.001);
         assertEquals(0.2, item.getPeso(), 0.001);
     }
 
