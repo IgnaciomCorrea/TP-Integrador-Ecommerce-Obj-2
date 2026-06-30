@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import Catalogo.Catalogo;
 import Catalogo.StockVendible;
 import CriterioBusqueda.Criterio;
+import pedido.Entregado;
 import pedido.ObservadorStock;
 import pedido.Pedido;
 import reportes.ReporteProductosMasVendidos;
@@ -35,23 +36,25 @@ public class Sistema {
 			throw new IllegalArgumentException("El pedido no puede ser nulo");
 		}
 
-		pedido.agregarObservador(new ObservadorStock(catalogo));
-		pedidos.add(pedido);
-
 		if (catalogo.verificarStockPedido(pedido)) {
+			pedido.agregarObservador(new ObservadorStock(catalogo));
+			pedidos.add(pedido);
 			pedido.confirmarPedido();
 		} else {
 			pedido.cancelarPedido();
+			pedidos.add(pedido);
 		}
 	}
+
 
 	public ReporteProductosMasVendidos generarReporteProductosMasVendidos(LocalDate inicio, LocalDate fin) {
 		ReporteProductosMasVendidos visitor = new ReporteProductosMasVendidos(inicio, fin);
 		for (Pedido pedido : pedidos) {
-			// Asumimos que Pedido tiene getFecha()
-			if (pedido.getFecha().isAfter(inicio) && pedido.getFecha().isBefore(fin)) {
-				for (ItemVendible item : pedido.getVendibles()) {
-					item.accept(visitor);
+			if (pedido.getEstado() instanceof Entregado) {
+				if (pedido.getFecha().isAfter(inicio) && pedido.getFecha().isBefore(fin)) {
+					for (ItemVendible item : pedido.getVendibles()) {
+						item.accept(visitor);
+					}
 				}
 			}
 		}
