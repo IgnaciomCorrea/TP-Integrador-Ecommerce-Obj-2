@@ -2,8 +2,7 @@ package pedido;
 
 import Catalogo.Catalogo;
 import Catalogo.ItemVendible;
-import exceptions.ExcepcionGeneral;
-import notificaciones.ObservadorPedido;
+import exceptions.PedidoExcepcion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -75,7 +74,7 @@ class PedidoTest {
     class ConfirmarPedido {
         @Test
         void confirmarPedido_sinVendibles_debeLanzarExcepcion() {
-            assertThrows(ExcepcionGeneral.class, () -> pedido.confirmarPedido());
+            assertThrows(PedidoExcepcion.class, () -> pedido.confirmarPedido());
             assertTrue(pedido.getEstado() instanceof Borrador);
         }
 
@@ -90,13 +89,13 @@ class PedidoTest {
         void confirmarPedido_desdeConfirmado_debeLanzarExcepcion() {
             pedido.agregarVendible(itemMock1);
             pedido.confirmarPedido();
-            assertThrows(ExcepcionGeneral.class, () -> pedido.confirmarPedido());
+            assertThrows(PedidoExcepcion.class, () -> pedido.confirmarPedido());
         }
 
         @Test
         void confirmarPedido_desdeCancelado_debeLanzarExcepcion() {
             pedido.cancelarPedido();
-            assertThrows(ExcepcionGeneral.class, () -> pedido.confirmarPedido());
+            assertThrows(PedidoExcepcion.class, () -> pedido.confirmarPedido());
         }
     }
 
@@ -150,13 +149,13 @@ class PedidoTest {
             pedido.pasarAEnPreparacion();
             pedido.pasarAEnviado();
             pedido.pasarAEntregado();
-            assertThrows(ExcepcionGeneral.class, () -> pedido.cancelarPedido());
+            assertThrows(PedidoExcepcion.class, () -> pedido.cancelarPedido());
         }
 
         @Test
         void cancelarPedido_desdeCancelado_debeLanzarExcepcion() {
             pedido.cancelarPedido();
-            assertThrows(ExcepcionGeneral.class, () -> pedido.cancelarPedido());
+            assertThrows(PedidoExcepcion.class, () -> pedido.cancelarPedido());
         }
     }
 

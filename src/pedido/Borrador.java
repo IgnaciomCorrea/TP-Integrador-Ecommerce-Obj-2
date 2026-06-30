@@ -1,7 +1,7 @@
 package pedido;
 
 import Catalogo.ItemVendible;
-import exceptions.ExcepcionGeneral;
+import exceptions.PedidoExcepcion;
 
 public class Borrador implements EstadoPedido {
 
@@ -18,7 +18,7 @@ public class Borrador implements EstadoPedido {
     @Override
     public void confirmar(Pedido pedido) {
         if (pedido.getVendibles().isEmpty()) {
-            throw new ExcepcionGeneral("No se puede confirmar un pedido sin ítems");
+            throw new PedidoExcepcion("No se puede confirmar un pedido sin ítems");
         }
         pedido.setEstado(new Confirmado());
     }
@@ -31,16 +31,16 @@ public class Borrador implements EstadoPedido {
 
     @Override
     public void pasarAEnPreparacion(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede pasar a preparación desde Borrador");
+        throw new PedidoExcepcion("No se puede pasar a preparación desde Borrador");
     }
 
     @Override
     public void pasarAEnviado(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede pasar a enviado desde Borrador");
+        throw new PedidoExcepcion("No se puede pasar a enviado desde Borrador");
     }
 
     @Override
     public void pasarAEntregado(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede pasar a entregado desde Borrador");
+        throw new PedidoExcepcion("No se puede pasar a entregado desde Borrador");
     }
 }

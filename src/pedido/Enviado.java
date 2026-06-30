@@ -1,23 +1,23 @@
 package pedido;
 
 import Catalogo.ItemVendible;
-import exceptions.ExcepcionGeneral;
+import exceptions.PedidoExcepcion;
 
 public class Enviado implements EstadoPedido {
 
     @Override
     public void agregarVendible(Pedido pedido, ItemVendible vendible) {
-        throw new ExcepcionGeneral("No se puede modificar un pedido enviado");
+        throw new PedidoExcepcion("No se puede modificar un pedido enviado");
     }
 
     @Override
     public void quitarVendible(Pedido pedido, ItemVendible vendible) {
-        throw new ExcepcionGeneral("No se puede modificar un pedido enviado");
+        throw new PedidoExcepcion("No se puede modificar un pedido enviado");
     }
 
     @Override
     public void confirmar(Pedido pedido) {
-        throw new ExcepcionGeneral("El pedido ya fue confirmado");
+        throw new PedidoExcepcion("El pedido ya fue confirmado");
     }
 
     @Override
@@ -29,12 +29,12 @@ public class Enviado implements EstadoPedido {
 
     @Override
     public void pasarAEnPreparacion(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede volver a preparación desde enviado");
+        throw new PedidoExcepcion("No se puede volver a preparación desde enviado");
     }
 
     @Override
     public void pasarAEnviado(Pedido pedido) {
-        throw new ExcepcionGeneral("El pedido ya está en enviado");
+        throw new PedidoExcepcion("El pedido ya está en enviado");
     }
 
     @Override
