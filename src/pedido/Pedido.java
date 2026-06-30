@@ -1,12 +1,14 @@
 package pedido;
 
 import Catalogo.ItemVendible;
+import envio.MetodoEnvio;
+import metodoPago.MedioDePago;
+import metodoPago.MetodoPago;
 import notificaciones.CambioEstadoEvento;
 import notificaciones.ObservadorPedido;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Pedido {
@@ -15,13 +17,19 @@ public class Pedido {
     private List<ObservadorPedido> observadores;
     private NotaCredito notaCredito;
     private LocalDate fecha;
+    private MetodoPago metodoPago;
+    private MetodoEnvio metodoEnvio;
+    private MedioDePago medioDePago;
 
-    public Pedido() {
+    public Pedido(MetodoPago<?> metodoPago, MetodoEnvio metodoEnvio, MedioDePago medioDePago) {
         this.estado = new Borrador();
         this.vendibles = new ArrayList<>();
         this.observadores = new ArrayList<>();
         this.notaCredito = null;
         this.fecha = LocalDate.now();
+        this.metodoPago = metodoPago;
+        this.metodoEnvio = metodoEnvio;
+        this.medioDePago = medioDePago;
     }
 
     public void agregarObservador(ObservadorPedido observador) {
@@ -98,10 +106,28 @@ public class Pedido {
     }
 
     public double calcularCostoEnvio() {
-        return 0; // placeholder
+        // acá debería calcular el costo de envio con el metodo de envio correspondiente:
+        // return this.metodoEnvio(this, direccion, sucursal);
+        return 0;
     }
 
     public List<ObservadorPedido> getObservadores() {
         return new ArrayList<>(observadores);
+    }
+
+    public void setMetodoDePago(MetodoPago<?> metodoDePago, MedioDePago medioDePago) {
+        estado.setMetodoDePago(this, metodoDePago, medioDePago);
+    }
+
+    public void setMetodoDeEnvio(MetodoEnvio metodoEnvio) {
+        estado.setMetodoDeEnvio(this, metodoEnvio);
+    }
+
+    public void cobrarPedido(){
+        this.metodoPago.procesarPago(this.precioTotalConEnvio(), this.medioDePago);
+    }
+
+    private Double precioTotalConEnvio(){
+        return this.calcularPrecioTotal() + this.calcularCostoEnvio();
     }
 }

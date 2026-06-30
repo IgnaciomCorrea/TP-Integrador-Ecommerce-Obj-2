@@ -3,7 +3,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Producto extends Vendible{
-    
+
+
 	private Set<Atributo<?>> atributos = new HashSet<Atributo<?>>();
 	private Double precio;
 	private Double peso;

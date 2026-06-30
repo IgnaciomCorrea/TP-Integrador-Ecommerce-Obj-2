@@ -1,7 +1,10 @@
 package pedido;
 
 import Catalogo.ItemVendible;
+import envio.MetodoEnvio;
 import exceptions.PedidoExcepcion;
+import metodoPago.MedioDePago;
+import metodoPago.MetodoPago;
 
 public class Enviado implements EstadoPedido {
 
@@ -40,5 +43,16 @@ public class Enviado implements EstadoPedido {
     @Override
     public void pasarAEntregado(Pedido pedido) {
         pedido.setEstado(new Entregado());
+    }
+
+
+    @Override
+    public void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago){
+        throw new PedidoExcepcion("No se puede modificar un pedido este estado");
+    }
+
+    @Override
+    public void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio){
+        throw new PedidoExcepcion("No se puede modificar un pedido este estado");
     }
 }

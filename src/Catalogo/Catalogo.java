@@ -1,5 +1,7 @@
 package Catalogo;
 
+import pedido.Borrador;
+import pedido.Cancelado;
 import pedido.Pedido;
 
 import java.util.ArrayList;
@@ -29,8 +31,8 @@ public class Catalogo {
 		if (this.verificarStockPedido(pedido)) {
 			this.restarStock(pedido.getVendibles());
 		} else {
-			// agregar cambio de estado del pedido a Cancelado
-			throw new IllegalArgumentException("No hay Stock disponible para tu pedido.");
+			pedido.setEstado(new Cancelado());
+			throw new IllegalArgumentException("No hay Stock disponible para tu pedido y ha sido cancelado.");
 		}
 	}
 

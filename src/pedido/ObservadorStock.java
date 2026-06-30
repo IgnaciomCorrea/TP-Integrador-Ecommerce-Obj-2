@@ -17,7 +17,7 @@ public class ObservadorStock implements ObservadorPedido {
         EstadoPedido anterior = evento.getEstadoAnterior();
 
         if (nuevo instanceof Confirmado) {
-            catalogo.restarStock(pedido.getVendibles());
+            catalogo.armarPedido(pedido);
         }
 
         if (nuevo instanceof Cancelado) {

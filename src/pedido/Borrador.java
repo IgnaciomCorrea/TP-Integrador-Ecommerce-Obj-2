@@ -1,7 +1,10 @@
 package pedido;
 
 import Catalogo.ItemVendible;
+import envio.MetodoEnvio;
 import exceptions.PedidoExcepcion;
+import metodoPago.MedioDePago;
+import metodoPago.MetodoPago;
 
 public class Borrador implements EstadoPedido {
 
@@ -20,6 +23,7 @@ public class Borrador implements EstadoPedido {
         if (pedido.getVendibles().isEmpty()) {
             throw new PedidoExcepcion("No se puede confirmar un pedido sin ítems");
         }
+        pedido.cobrarPedido();
         pedido.setEstado(new Confirmado());
     }
 
@@ -43,4 +47,16 @@ public class Borrador implements EstadoPedido {
     public void pasarAEntregado(Pedido pedido) {
         throw new PedidoExcepcion("No se puede pasar a entregado desde Borrador");
     }
+
+    @Override
+    public void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago){
+        pedido.setMetodoDePago(metodoPago, medioDePago);
+    }
+
+    @Override
+    public void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio){
+        pedido.setMetodoDeEnvio(metodoEnvio);
+    }
+
+
 }

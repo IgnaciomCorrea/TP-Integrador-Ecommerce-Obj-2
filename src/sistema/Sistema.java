@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import Catalogo.Catalogo;
 import Catalogo.StockVendible;
 import CriterioBusqueda.Criterio;
+import envio.MetodoEnvio;
+import metodoPago.*;
 import pedido.ObservadorStock;
 import pedido.Pedido;
 import reportes.ReporteProductosMasVendidos;
@@ -21,6 +23,7 @@ public class Sistema {
 	public Sistema(Catalogo catalogo) {
 		this.catalogo = catalogo;
 		this.pedidos = new ArrayList<>();
+
 	}
 
 	public List<StockVendible> filtrarCon(Criterio criterio) {
@@ -30,7 +33,7 @@ public class Sistema {
 	}
 
 
-	public void armarPedido(Pedido pedido) {
+	public void armarPedido(Pedido pedido){
 		if (pedido == null) {
 			throw new IllegalArgumentException("El pedido no puede ser nulo");
 		}
@@ -57,4 +60,14 @@ public class Sistema {
 		}
 		return visitor;
 	}
+
+	public void setMetodoPagoPedido(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago) {
+		pedido.setMetodoDePago(metodoPago, medioDePago);
+	}
+
+	public void setMetodoEnvioPedido(Pedido pedido, MetodoEnvio metodoEnvio){
+		pedido.setMetodoDeEnvio(metodoEnvio);
+	}
+
+
 }
