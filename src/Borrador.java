@@ -14,7 +14,7 @@ public class Borrador implements EstadoPedido {
     @Override
     public void confirmar(Pedido pedido) {
         if (pedido.getVendibles().isEmpty()) {
-            throw new ExcepcionGeneral("No se puede confirmar un pedido sin ítems");
+            throw new ExcepcionGeneral("No se confirmara este pedido porque no tiene vendibles");
         }
         pedido.setEstado(new Confirmado());
     }
@@ -27,16 +27,16 @@ public class Borrador implements EstadoPedido {
 
     @Override
     public void pasarAEnPreparacion(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede pasar a preparación desde Borrador");
+        throw new ExcepcionGeneral("No se puede pasar al siguiente estado que es preaparacion");
     }
 
     @Override
     public void pasarAEnviado(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede pasar a enviado desde Borrador");
+        throw new ExcepcionGeneral("No se puede pasar a enviado desde el estado actual ");
     }
 
     @Override
     public void pasarAEntregado(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede pasar a entregado desde Borrador");
+        throw new ExcepcionGeneral("No se puede pasar a entregado desde el estado actual ");
     }
 }
