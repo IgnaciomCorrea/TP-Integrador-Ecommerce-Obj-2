@@ -2,6 +2,7 @@ package notificaciones;
 
 import org.junit.jupiter.api.Test;
 import pedido.*;
+import testutils.PedidoFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -12,51 +13,48 @@ class ServicioFidelizacionTest {
 
     @Test
     void onCambioEstado_cuandoNuevoEstadoEsCancelado_debeEnviarCupon() {
+        PrintStream originalOut = System.out;
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
-        ServicioFidelizacion servicio = new ServicioFidelizacion();
-        Pedido pedido = new Pedido();
-        CambioEstadoEvento evento = new CambioEstadoEvento(new Confirmado(), new Cancelado());
+        try {
+            ServicioFidelizacion servicio = new ServicioFidelizacion();
+            Pedido pedido = PedidoFactory.pedido();
+            CambioEstadoEvento evento = new CambioEstadoEvento(new Confirmado(), new Cancelado());
 
-        servicio.onCambioEstado(evento, pedido);
+            servicio.onCambioEstado(evento, pedido);
 
-        String salida = outContent.toString();
-        assertTrue(salida.contains("Enviando cupón de descuento del 5% al cliente."));
-
-        System.setOut(System.out);
+            assertTrue(outContent.toString().contains("Enviando cupon de descuento del 5% al cliente."));
+        } finally {
+            System.setOut(originalOut);
+        }
     }
 
     @Test
     void onCambioEstado_cuandoNuevoEstadoNoEsCancelado_noDebeEnviarCupon() {
+        PrintStream originalOut = System.out;
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
-        ServicioFidelizacion servicio = new ServicioFidelizacion();
-        Pedido pedido = new Pedido();
+        try {
+            ServicioFidelizacion servicio = new ServicioFidelizacion();
+            Pedido pedido = PedidoFactory.pedido();
 
-        CambioEstadoEvento eventoConfirmado = new CambioEstadoEvento(new Borrador(), new Confirmado());
-        servicio.onCambioEstado(eventoConfirmado, pedido);
+            servicio.onCambioEstado(new CambioEstadoEvento(new Borrador(), new Confirmado()), pedido);
+            servicio.onCambioEstado(new CambioEstadoEvento(new Confirmado(), new EnPreparacion()), pedido);
+            servicio.onCambioEstado(new CambioEstadoEvento(new EnPreparacion(), new Enviado()), pedido);
+            servicio.onCambioEstado(new CambioEstadoEvento(new Enviado(), new Entregado()), pedido);
 
-        CambioEstadoEvento eventoPreparacion = new CambioEstadoEvento(new Confirmado(), new EnPreparacion());
-        servicio.onCambioEstado(eventoPreparacion, pedido);
-
-        CambioEstadoEvento eventoEnviado = new CambioEstadoEvento(new EnPreparacion(), new Enviado());
-        servicio.onCambioEstado(eventoEnviado, pedido);
-
-        CambioEstadoEvento eventoEntregado = new CambioEstadoEvento(new Enviado(), new Entregado());
-        servicio.onCambioEstado(eventoEntregado, pedido);
-
-        String salida = outContent.toString();
-        assertFalse(salida.contains("cupón de descuento"));
-
-        System.setOut(System.out);
+            assertFalse(outContent.toString().contains("cupon de descuento"));
+        } finally {
+            System.setOut(originalOut);
+        }
     }
 
     @Test
     void onCambioEstado_conEstadoCancelado_noLanzaExcepcion() {
         ServicioFidelizacion servicio = new ServicioFidelizacion();
-        Pedido pedido = new Pedido();
+        Pedido pedido = PedidoFactory.pedido();
         CambioEstadoEvento evento = new CambioEstadoEvento(new Confirmado(), new Cancelado());
 
         assertDoesNotThrow(() -> servicio.onCambioEstado(evento, pedido));

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import testutils.PedidoFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,7 +32,7 @@ class EnvioEstandarTest {
     @BeforeEach
     void setUp() {
         envioEstandar = new EnvioEstandar(correoMock);
-        pedido = new Pedido();
+        pedido = PedidoFactory.pedido();
 
         // Configurar mocks para calcular peso total
         when(itemMock1.getPeso()).thenReturn(0.5);

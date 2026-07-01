@@ -111,6 +111,10 @@ public class Pedido {
          return this.metodoEnvio.calcularCosto(this, direccion, sucursal);
     }
 
+    public double calcularCostoEnvio() {
+        return 0;
+    }
+
     public List<ObservadorPedido> getObservadores() {
         return new ArrayList<>(observadores);
     }
@@ -126,6 +130,10 @@ public class Pedido {
 
     public void setMetodoDeEnvio(MetodoEnvio metodoEnvio) {
         estado.setMetodoDeEnvio(this, metodoEnvio);
+    }
+
+    void asignarMetodoDeEnvio(MetodoEnvio metodoEnvio) {
+        this.metodoEnvio = metodoEnvio;
     }
 
     public void cobrarPedido(){

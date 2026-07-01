@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pedido.*;
+import testutils.PedidoFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,7 +28,7 @@ class NotificadorEmailTest {
 
     @Test
     void onCambioEstado_cuandoNuevoEstadoEsConfirmado_debeEnviarEmail() {
-        Pedido pedido = new Pedido();
+        Pedido pedido = PedidoFactory.pedido();
         CambioEstadoEvento evento = new CambioEstadoEvento(new Borrador(), new Confirmado());
 
         notificador.onCambioEstado(evento, pedido);
@@ -52,7 +53,7 @@ class NotificadorEmailTest {
 
     @Test
     void onCambioEstado_cuandoNuevoEstadoEsEnviado_debeEnviarEmail() {
-        Pedido pedido = new Pedido();
+        Pedido pedido = PedidoFactory.pedido();
         CambioEstadoEvento evento = new CambioEstadoEvento(new EnPreparacion(), new Enviado());
 
         notificador.onCambioEstado(evento, pedido);
@@ -62,7 +63,7 @@ class NotificadorEmailTest {
 
     @Test
     void onCambioEstado_cuandoNuevoEstadoEsEntregado_debeEnviarEmail() {
-        Pedido pedido = new Pedido();
+        Pedido pedido = PedidoFactory.pedido();
         CambioEstadoEvento evento = new CambioEstadoEvento(new Enviado(), new Entregado());
 
         notificador.onCambioEstado(evento, pedido);
@@ -72,7 +73,7 @@ class NotificadorEmailTest {
 
     @Test
     void onCambioEstado_cuandoNuevoEstadoNoEsConfirmadoEnviadoNiEntregado_noDebeEnviarEmail() {
-        Pedido pedido = new Pedido();
+        Pedido pedido = PedidoFactory.pedido();
 
         CambioEstadoEvento eventoBorrador = new CambioEstadoEvento(new Confirmado(), new Borrador());
         notificador.onCambioEstado(eventoBorrador, pedido);

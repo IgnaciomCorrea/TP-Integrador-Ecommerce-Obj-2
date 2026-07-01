@@ -55,7 +55,7 @@ public class Borrador implements EstadoPedido {
 
     @Override
     public void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio){
-        pedido.setMetodoDeEnvio(metodoEnvio);
+        pedido.asignarMetodoDeEnvio(metodoEnvio);
     }
 
 

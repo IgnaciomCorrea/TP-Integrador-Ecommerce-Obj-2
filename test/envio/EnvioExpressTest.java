@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import testutils.PedidoFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -31,7 +32,7 @@ class EnvioExpressTest {
     @BeforeEach
     void setUp() {
         envioExpress = new EnvioExpress(calculadoraMock);
-        pedido = new Pedido();
+        pedido = PedidoFactory.pedido();
 
         // Configurar mocks para calcular precio total
         when(itemMock1.getPrecioFinal()).thenReturn(100.0);

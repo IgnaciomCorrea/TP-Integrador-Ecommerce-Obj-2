@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import testutils.PedidoFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,7 +23,7 @@ class PedidoNotificacionTest {
 
     @BeforeEach
     void setUp() {
-        pedido = new Pedido();
+        pedido = PedidoFactory.pedido();
     }
 
     @Test
@@ -62,6 +63,7 @@ class PedidoNotificacionTest {
     @Test
     void transicionDeEstado_debeNotificarObservadores() {
         pedido.agregarObservador(observadorMock);
+        pedido.agregarVendible(mock(Catalogo.ItemVendible.class));
 
         pedido.confirmarPedido();
 
