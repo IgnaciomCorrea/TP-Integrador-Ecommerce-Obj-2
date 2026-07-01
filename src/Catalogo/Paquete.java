@@ -3,20 +3,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Paquete extends Vendible{
-   
+
 	private List<ItemVendible> vendibles;
 
     public Paquete(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento) {
     	super(sku, nombre, marca, categoria, descripcion, descuento);
     	vendibles = new ArrayList<ItemVendible>();
-    }    
-    
+    }
+
     // Itera por todos los elementos de la lista paquetes y pide su precioBase, ya sea otro
-    // paquete o un producto. 
+    // paquete o un producto.
     @Override
     public Double getPrecioBase() {
     	return vendibles.stream()
-    					.mapToDouble(vendible->vendible.getPrecioBase())
+    					.mapToDouble(vendible->vendible.getPrecioFinal())
         				.sum();
     }
 
@@ -29,9 +29,12 @@ public class Paquete extends Vendible{
     public void agregarVendible(ItemVendible vendible){
     	vendibles.add(vendible);
     }
-    
+
     public void eliminarVendible(ItemVendible vendible){
     	vendibles.remove(vendible);
     }
-
+    
+    public Double getPeso() {
+    	return vendibles.stream().mapToDouble(vendible-> vendible.getPeso()).sum();
+    }
 }
