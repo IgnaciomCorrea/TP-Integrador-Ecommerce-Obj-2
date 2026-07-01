@@ -19,7 +19,7 @@ public class Cancelado implements EstadoPedido {
     }
     @Override
     public void pasarAEnPreparacion(Pedido pedido) {
-        throw new ExcepcionGeneral("No se puede reanudar un pedido cancelado ");
+        throw new ExcepcionGeneral("No se puede reanudar un pedido cancelado  ");
     }
     @Override
     public void pasarAEnviado(Pedido pedido) {
