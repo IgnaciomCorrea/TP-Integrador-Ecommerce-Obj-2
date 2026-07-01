@@ -6,7 +6,7 @@ import reportes.ReportVisitor;
 public class ItemVendible {
 	
 	private int cantidad;
-	private Vendible vendible;
+	public Vendible vendible;
 	
 	public ItemVendible(int cantidad, Vendible vendible) {
 		this.validarCantidad(cantidad);
