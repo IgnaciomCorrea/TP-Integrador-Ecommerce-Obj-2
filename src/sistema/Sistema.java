@@ -73,5 +73,7 @@ public class Sistema {
 		pedido.setMetodoDeEnvio(metodoEnvio);
 	}
 
-
+	public ArrayList<Pedido> getPedidos() {
+		return pedidos;
+	}
 }

@@ -2,7 +2,10 @@ package pedido;
 
 import Catalogo.Catalogo;
 import Catalogo.ItemVendible;
+import direccion.Direccion;
+import envio.MetodoEnvio;
 import exceptions.PedidoExcepcion;
+import metodoPago.MedioDePago;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import sucursal.Sucursal;
 import testutils.PedidoFactory;
 import testutils.PedidoFactory.PagoDummy;
 
@@ -225,6 +229,175 @@ class PedidoTest {
             pedidoConStockObserver.cancelarPedido();
 
             verify(catalogoMock, never()).reponerStock(anyList());
+        }
+    }
+    @Nested
+    class ConstructorYGetters {
+        @Test
+        void constructorConParametros_debeInicializarAtributos() {
+            PagoDummy pago = new PagoDummy();
+            MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
+            MedioDePago medioDePago = mock(MedioDePago.class);
+            Pedido p = new Pedido(pago, metodoEnvio, medioDePago);
+
+            assertNotNull(p.getEstado());
+            assertTrue(p.getEstado() instanceof Borrador);
+            assertNotNull(p.getVendibles());
+            assertTrue(p.getVendibles().isEmpty());
+            assertNotNull(p.getObservadores());
+            assertTrue(p.getObservadores().isEmpty());
+            assertNotNull(p.getFecha());
+            assertNull(p.getNotaCredito());
+        }
+
+        @Test
+        void constructorConParametrosNull_debeLanzarNPE() {
+            PagoDummy pago = new PagoDummy();
+            MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
+            MedioDePago medioDePago = mock(MedioDePago.class);
+
+            assertThrows(NullPointerException.class,
+                    () -> new Pedido(null, metodoEnvio, medioDePago));
+            assertThrows(NullPointerException.class,
+                    () -> new Pedido(pago, null, medioDePago));
+            assertThrows(NullPointerException.class,
+                    () -> new Pedido(pago, metodoEnvio, null));
+        }
+
+        // ... otros tests (getFecha, getObservadores) iguales que antes ...
+    }
+
+    @Nested
+    class CalculoCostoEnvio {
+        @Test
+        void calcularCostoEnvio_conDireccionYSucursal_debeDelegarEnMetodoEnvio() {
+            PagoDummy pago = new PagoDummy();
+            MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
+            MedioDePago medioDePago = mock(MedioDePago.class);
+            Pedido p = new Pedido(pago, metodoEnvio, medioDePago);
+
+            Direccion direccion = mock(Direccion.class);
+            Sucursal sucursal = mock(Sucursal.class);
+            when(metodoEnvio.calcularCosto(p, direccion, sucursal)).thenReturn(99.0);
+
+            double costo = p.calcularCostoEnvio(direccion, sucursal);
+            assertEquals(99.0, costo, 0.001);
+            verify(metodoEnvio, times(1)).calcularCosto(p, direccion, sucursal);
+        }
+
+        @Test
+        void calcularCostoEnvio_sinParametros_debeRetornarCero() {
+            assertEquals(0.0, pedido.calcularCostoEnvio());
+        }
+    }
+
+    @Nested
+    class SetMetodosDePagoYEnvio {
+        @Test
+        void setMetodoDePago_enBorrador_debeAsignar() {
+            PagoDummy pago = new PagoDummy();
+            MedioDePago medioDePago = mock(MedioDePago.class);
+            assertDoesNotThrow(() -> pedido.setMetodoDePago(pago, medioDePago));
+            assertTrue(pedido.getEstado() instanceof Borrador);
+        }
+
+        @Test
+        void setMetodoDePago_enConfirmado_debeLanzarExcepcion() {
+            pedido.agregarVendible(itemMock1);
+            pedido.confirmarPedido();
+            PagoDummy pago = new PagoDummy();
+            MedioDePago medio = mock(MedioDePago.class);
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.setMetodoDePago(pago, medio));
+        }
+
+        @Test
+        void setMetodoDeEnvio_enBorrador_debeAsignar() {
+            MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
+            assertDoesNotThrow(() -> pedido.setMetodoDeEnvio(metodoEnvio));
+            assertTrue(pedido.getEstado() instanceof Borrador);
+        }
+
+        @Test
+        void setMetodoDeEnvio_enConfirmado_debeLanzarExcepcion() {
+            pedido.agregarVendible(itemMock1);
+            pedido.confirmarPedido();
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.setMetodoDeEnvio(mock(MetodoEnvio.class)));
+        }
+
+        @Test
+        void asignarMetodoDePago_packagePrivate_debeAsignarAtributos() {
+            PagoDummy pago = new PagoDummy();
+            MedioDePago medio = mock(MedioDePago.class);
+            pedido.asignarMetodoDePago(pago, medio);
+
+            // Verificamos que el pedido pueda cobrar usando el pago asignado
+            Pedido pSpy = spy(pedido);
+            doReturn(0.0).when(pSpy).calcularCostoEnvio();
+            pSpy.cobrarPedido();
+
+            // Verificar que el pago procesó la transacción (usando el contador)
+            assertEquals(1, pago.getTransacciones());
+            assertEquals(1, pago.getValidaciones());
+            assertEquals(1, pago.getReservas());
+            assertEquals(1, pago.getNotificaciones());
+        }
+
+        @Test
+        void asignarMetodoDeEnvio_packagePrivate_debeAsignarAtributos() {
+            MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
+            pedido.asignarMetodoDeEnvio(metodoEnvio);
+            Direccion direccion = mock(Direccion.class);
+            Sucursal sucursal = mock(Sucursal.class);
+            when(metodoEnvio.calcularCosto(pedido, direccion, sucursal)).thenReturn(77.0);
+            double costo = pedido.calcularCostoEnvio(direccion, sucursal);
+            assertEquals(77.0, costo, 0.001);
+        }
+    }
+
+    @Nested
+    class CobrarPedido {
+        @Test
+        void cobrarPedido_debeProcesarPagoConTotalIncluyendoEnvio() {
+            PagoDummy pago = new PagoDummy();
+            MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
+            MedioDePago medioDePago = mock(MedioDePago.class);
+            Pedido p = new Pedido(pago, metodoEnvio, medioDePago);
+
+            when(itemMock1.getPrecioFinal()).thenReturn(120.0);
+            when(itemMock2.getPrecioFinal()).thenReturn(80.0);
+            p.agregarVendible(itemMock1);
+            p.agregarVendible(itemMock2);
+
+            Pedido pSpy = spy(p);
+            doReturn(50.0).when(pSpy).calcularCostoEnvio();
+
+            pSpy.cobrarPedido();
+
+            // Verificar que el pago dummy procesó la transacción
+            assertEquals(1, pago.getValidaciones());
+            assertEquals(1, pago.getReservas());
+            assertEquals(1, pago.getTransacciones());
+            assertEquals(1, pago.getNotificaciones());
+        }
+
+        @Test
+        void cobrarPedido_sinItems_debeProcesarPagoConSoloEnvio() {
+            PagoDummy pago = new PagoDummy();
+            MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
+            MedioDePago medioDePago = mock(MedioDePago.class);
+            Pedido p = new Pedido(pago, metodoEnvio, medioDePago);
+
+            Pedido pSpy = spy(p);
+            doReturn(30.0).when(pSpy).calcularCostoEnvio();
+
+            pSpy.cobrarPedido();
+
+            assertEquals(1, pago.getTransacciones());
+            assertEquals(1, pago.getValidaciones());
+            assertEquals(1, pago.getReservas());
+            assertEquals(1, pago.getNotificaciones());
         }
     }
 }

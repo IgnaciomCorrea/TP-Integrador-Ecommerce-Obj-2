@@ -1,9 +1,11 @@
-package Sistema;
+package catalogo;
 
-import Catalogo.*;
+import Catalogo.StockVendible;
+import Catalogo.Vendible;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -16,6 +18,7 @@ class StockVendibleTest {
     void setUp() {
         vendibleMock = mock(Vendible.class);
         when(vendibleMock.getNombre()).thenReturn("Producto Test");
+        when(vendibleMock.getSku()).thenReturn("SKU-TEST");
         when(vendibleMock.getPrecioBase()).thenReturn(100.0);
 
         stockVendible = new StockVendible(10, vendibleMock);
@@ -59,9 +62,14 @@ class StockVendibleTest {
     @DisplayName("Debería obtener el nombre del vendible")
     void testGetNombre() {
         assertEquals("Producto Test", stockVendible.getNombre());
-
-        // Verificar que usa el nombre del vendible
         verify(vendibleMock, times(1)).getNombre();
+    }
+
+    @Test
+    @DisplayName("Debería obtener el SKU del vendible")
+    void testGetSku() {
+        assertEquals("SKU-TEST", stockVendible.getSku());
+        verify(vendibleMock, times(1)).getSku();
     }
 
     @Test
@@ -69,5 +77,12 @@ class StockVendibleTest {
     void testStockCero() {
         StockVendible sinStock = new StockVendible(0, vendibleMock);
         assertEquals(0, sinStock.getStock());
+    }
+
+    @Test
+    @DisplayName("Debería permitir stock negativo (aunque no sea deseable)")
+    void testStockNegativo() {
+        stockVendible.setStock(-5);
+        assertEquals(-5, stockVendible.getStock());
     }
 }

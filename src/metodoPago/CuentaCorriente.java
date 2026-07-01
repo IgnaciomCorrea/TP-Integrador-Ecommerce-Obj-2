@@ -11,4 +11,9 @@ public class CuentaCorriente extends MedioDePago{
 	public String getAlias() {
 		return alias;
 	}
+
+	public CuentaCorriente(int cbu, String alias) {
+		this.cbu = cbu;
+		this.alias = alias;
+	}
 }
