@@ -3,12 +3,12 @@ import exceptions.ExcepcionGeneral;
 public class Confirmado implements EstadoPedido {
     @Override
     public void agregarVendible(Pedido pedido, Vendible vendible) {
-        throw new ExcepcionGeneral("No se puede agregar ítems a un pedido confirmado");
+        throw new ExcepcionGeneral("No se puede agregar items al pedido en este momento , ya esta confirmado");
     }
 
     @Override
     public void quitarVendible(Pedido pedido, Vendible vendible) {
-        throw new ExcepcionGeneral("No se puede quitar ítems de un pedido confirmado");
+        throw new ExcepcionGeneral("No se puede quitar ítems de un pedido en este estado actual");
     }
 
     @Override
@@ -33,11 +33,11 @@ public class Confirmado implements EstadoPedido {
 
     @Override
     public void pasarAEnviado(Pedido pedido) {
-        throw new ExcepcionGeneral("Debe estar en preparación para pasar a enviado");
+        throw new ExcepcionGeneral("no se puede pasar a enviado en este estado actual");
     }
 
     @Override
     public void pasarAEntregado(Pedido pedido) {
-        throw new ExcepcionGeneral("Debe estar en enviado para pasar a entregado");
+        throw new ExcepcionGeneral("no se puede pasar a enviado en este estado actual);
     }
 }
