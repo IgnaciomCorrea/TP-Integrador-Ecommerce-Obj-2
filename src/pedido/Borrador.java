@@ -49,8 +49,8 @@ public class Borrador implements EstadoPedido {
     }
 
     @Override
-    public void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago){
-        pedido.setMetodoDePago(metodoPago, medioDePago);
+    public void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago) {
+        pedido.asignarMetodoDePago(metodoPago, medioDePago);
     }
 
     @Override

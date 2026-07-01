@@ -10,6 +10,7 @@ import Catalogo.StockVendible;
 import CriterioBusqueda.Criterio;
 import envio.MetodoEnvio;
 import metodoPago.*;
+import pedido.Entregado;
 import pedido.ObservadorStock;
 import pedido.Pedido;
 import reportes.ReporteProductosMasVendidos;
@@ -51,14 +52,17 @@ public class Sistema {
 	public ReporteProductosMasVendidos generarReporteProductosMasVendidos(LocalDate inicio, LocalDate fin) {
 		ReporteProductosMasVendidos visitor = new ReporteProductosMasVendidos(inicio, fin);
 		for (Pedido pedido : pedidos) {
-			// Asumimos que Pedido tiene getFecha()
-			if (pedido.getFecha().isAfter(inicio) && pedido.getFecha().isBefore(fin)) {
+			if (pedido.getEstado() instanceof Entregado && estaDentroDelPeriodo(pedido.getFecha(), inicio, fin)) {
 				for (ItemVendible item : pedido.getVendibles()) {
 					item.accept(visitor);
 				}
 			}
 		}
 		return visitor;
+	}
+
+	private boolean estaDentroDelPeriodo(LocalDate fecha, LocalDate inicio, LocalDate fin) {
+		return !fecha.isBefore(inicio) && !fecha.isAfter(fin);
 	}
 
 	public void setMetodoPagoPedido(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago) {

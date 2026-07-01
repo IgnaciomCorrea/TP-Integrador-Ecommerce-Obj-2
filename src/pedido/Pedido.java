@@ -1,11 +1,13 @@
 package pedido;
 
 import Catalogo.ItemVendible;
+import direccion.Direccion;
 import envio.MetodoEnvio;
 import metodoPago.MedioDePago;
 import metodoPago.MetodoPago;
 import notificaciones.CambioEstadoEvento;
 import notificaciones.ObservadorPedido;
+import sucursal.Sucursal;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -105,18 +107,21 @@ public class Pedido {
         return notaCredito;
     }
 
-    public double calcularCostoEnvio() {
-        // acá debería calcular el costo de envio con el metodo de envio correspondiente:
-        // return this.metodoEnvio(this, direccion, sucursal);
-        return 0;
+    public double calcularCostoEnvio(Direccion direccion, Sucursal sucursal) {
+         return this.metodoEnvio.calcularCosto(this, direccion, sucursal);
     }
 
     public List<ObservadorPedido> getObservadores() {
         return new ArrayList<>(observadores);
     }
 
-    public void setMetodoDePago(MetodoPago<?> metodoDePago, MedioDePago medioDePago) {
-        estado.setMetodoDePago(this, metodoDePago, medioDePago);
+    public void setMetodoDePago(MetodoPago<?> metodoPago, MedioDePago medioDePago) {
+        estado.setMetodoDePago(this, metodoPago, medioDePago);
+    }
+
+    void asignarMetodoDePago(MetodoPago<?> metodoPago, MedioDePago medioDePago) {
+        this.metodoPago = metodoPago;
+        this.medioDePago = medioDePago;
     }
 
     public void setMetodoDeEnvio(MetodoEnvio metodoEnvio) {
