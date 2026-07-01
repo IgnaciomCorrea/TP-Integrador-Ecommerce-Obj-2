@@ -3,12 +3,12 @@ import exceptions.ExcepcionGeneral;
 public class EnPreparacion implements EstadoPedido {
     @Override
     public void agregarVendible(Pedido pedido, Vendible vendible) {
-        throw new ExcepcionGeneral("No se puede modificar un pedido en preparación");
+        throw new ExcepcionGeneral("No se puede modificar un pedido que se esta preparando");
     }
 
     @Override
     public void quitarVendible(Pedido pedido, Vendible vendible) {
-        throw new ExcepcionGeneral("No se puede modificar un pedido en preparación");
+        throw new ExcepcionGeneral("No se puede quitar productos un pedido en preparación");
     }
 
     @Override
@@ -26,7 +26,7 @@ public class EnPreparacion implements EstadoPedido {
 
     @Override
     public void pasarAEnPreparacion(Pedido pedido) {
-        throw new ExcepcionGeneral("El pedido ya está en preparación");
+        throw new ExcepcionGeneral("El pedido se encuentra en el estado  preparación");
     }
 
     @Override
@@ -36,6 +36,6 @@ public class EnPreparacion implements EstadoPedido {
 
     @Override
     public void pasarAEntregado(Pedido pedido) {
-        throw new ExcepcionGeneral("Debe estar en enviado para pasar a entregado");
+        throw new ExcepcionGeneral("No se puede pasar a entregado en el momento actual ");
     }
 }
