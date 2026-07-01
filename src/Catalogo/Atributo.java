@@ -17,6 +17,12 @@ public class Atributo<T> {
 	public T getValor() {
 		return valor;
 	}
-	
 
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public void setValor(T valor) {
+		this.valor = valor;
+	}
 }

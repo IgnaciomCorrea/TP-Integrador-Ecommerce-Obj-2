@@ -1,6 +1,7 @@
 package Catalogo;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
@@ -248,5 +249,90 @@ class PaqueteTest {
         assertThrows(IllegalArgumentException.class, () -> {
             new ItemVendible(0, productoReal);
         });
+    }
+
+    @Nested
+    class PesoYEliminacion {
+
+        @Test
+        @DisplayName("Debería calcular el peso total sumando pesos de items")
+        void testGetPeso() {
+            when(mockItem1.getPeso()).thenReturn(0.5);
+            when(mockItem2.getPeso()).thenReturn(0.3);
+            when(mockSubPaqueteItem.getPeso()).thenReturn(0.7);
+
+            paquete.agregarVendible(mockItem1);
+            paquete.agregarVendible(mockItem2);
+            paquete.agregarVendible(mockSubPaqueteItem);
+
+            assertEquals(1.5, paquete.getPeso(), 0.001);
+            verify(mockItem1).getPeso();
+            verify(mockItem2).getPeso();
+            verify(mockSubPaqueteItem).getPeso();
+        }
+
+        @Test
+        @DisplayName("Debería tener peso 0 cuando está vacío")
+        void testGetPesoVacio() {
+            assertEquals(0.0, paquete.getPeso());
+        }
+
+        @Test
+        @DisplayName("Eliminar item inexistente no debe lanzar excepción")
+        void testEliminarInexistente() {
+            assertDoesNotThrow(() -> paquete.eliminarVendible(mockItem1));
+            // Verificar que sigue vacío
+            assertEquals(0.0, paquete.getPrecioBase());
+        }
+
+        @Test
+        @DisplayName("Debería calcular precio base con items con descuentos individuales")
+        void testGetPrecioBaseConItemsConDescuentos() {
+            // Item1 tiene precio final 80 (base 100 con 20% desc)
+            // Item2 tiene precio final 45 (base 50 con 10% desc)
+            when(mockItem1.getPrecioFinal()).thenReturn(80.0);
+            when(mockItem2.getPrecioFinal()).thenReturn(45.0);
+
+            paquete.agregarVendible(mockItem1);
+            paquete.agregarVendible(mockItem2);
+
+            assertEquals(125.0, paquete.getPrecioBase(), 0.001);
+        }
+    }
+
+    @Nested
+    class AnidacionProfunda {
+
+        @Test
+        @DisplayName("Debería calcular precio de paquete anidado de 3 niveles")
+        void testGetPrecioBaseAnidadoProfundo() {
+            // Nivel 1: paquete principal
+            // Nivel 2: subpaquete
+            // Nivel 3: productos
+
+            Producto p1 = new Producto("P1", "Producto 1", "Marca", Categoria.ELECTRONICA,
+                    "Desc1", 0.0, 100.0, 0.5);
+            Producto p2 = new Producto("P2", "Producto 2", "Marca", Categoria.ELECTRONICA,
+                    "Desc2", 0.0, 50.0, 0.3);
+
+            Paquete subSubPaquete = new Paquete("SUB-SUB", "Sub-sub paquete", "Marca",
+                    Categoria.ELECTRONICA, "Sub-sub", 0.0);
+            subSubPaquete.agregarVendible(new ItemVendible(1, p1));
+
+            Paquete subPaquete = new Paquete("SUB", "Sub paquete", "Marca",
+                    Categoria.ELECTRONICA, "Sub", 10.0); // 10% desc
+            subPaquete.agregarVendible(new ItemVendible(1, p2));
+            subPaquete.agregarVendible(new ItemVendible(1, subSubPaquete));
+
+            Paquete principal = new Paquete("PRINC", "Principal", "Marca",
+                    Categoria.ELECTRONICA, "Principal", 5.0); // 5% desc
+            principal.agregarVendible(new ItemVendible(1, subPaquete));
+
+            // Cálculo esperado:
+            // subSubPaquete: base=100, desc=0% → final=100
+            // subPaquete: items = p2(50) + subSub(100) = 150, desc=10% → final=135
+            // principal: item = subPaquete(135), desc=5% → final=128.25
+            assertEquals(128.25, principal.getPrecioFinal(), 0.001);
+        }
     }
 }
