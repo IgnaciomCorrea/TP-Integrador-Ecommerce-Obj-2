@@ -16,13 +16,14 @@ public class Paquete extends Vendible{
     @Override
     public Double getPrecioBase() {
     	return vendibles.stream()
-    					.mapToDouble(vendible->vendible.getPrecioFinal())
+    					.mapToDouble(vendible->vendible.getPrecioBase())
         				.sum();
     }
 
     @Override
     public Double getPrecioFinal(){
     	Double precioBase = this.getPrecioBase();
+        System.out.printf("Precio Base : %.2f%n", precioBase);
     	return precioBase - (precioBase * this.descuento / 100);
     }
 

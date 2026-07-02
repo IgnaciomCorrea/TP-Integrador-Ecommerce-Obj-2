@@ -34,9 +34,7 @@ class EnvioExpressTest {
         envioExpress = new EnvioExpress(calculadoraMock);
         pedido = PedidoFactory.pedido();
 
-        // Configurar mocks para calcular precio total
-        when(itemMock1.getPrecioFinal()).thenReturn(100.0);
-        when(itemMock2.getPrecioFinal()).thenReturn(50.0);
+
 
         pedido.agregarVendible(itemMock1);
         pedido.agregarVendible(itemMock2);
@@ -46,6 +44,10 @@ class EnvioExpressTest {
     void calcularCosto_debeUsarCalculadoraConPrecioTotal() {
         Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
         Sucursal sucursal = mock(Sucursal.class);
+
+        // Configurar mocks para calcular precio total
+        when(itemMock1.getPrecioFinal()).thenReturn(100.0);
+        when(itemMock2.getPrecioFinal()).thenReturn(50.0);
 
         when(calculadoraMock.calcularCosto(150.0f)).thenReturn(22.5f);
 

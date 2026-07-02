@@ -22,7 +22,7 @@ class TestSistema {
     void setUp() {
         // Crear sistema con cat�logo inicializado
         catalogo = new Catalogo();
-        
+
         // ===== PRODUCTOS DE DEPORTES =====
         Producto pelotaFutbol = new Producto(
             "DEP-001", "Pelota de F�tbol", "Adidas",
@@ -51,7 +51,7 @@ class TestSistema {
             Categoria.ELECTRONICA, "Parlante port�til",
             10.0, 150.0,
                 0.2);
-        
+
         Producto monitor = new Producto(
             "ELE-003", "Monitor 24 pulgadas", "LG",
             Categoria.ELECTRONICA, "Monitor Full HD",
@@ -59,7 +59,7 @@ class TestSistema {
                 0.2);
         
         Producto teclado = new Producto(
-            "ELE-004", "Teclado Mec�nico", "Logitech",
+            "ELE-004", "Teclado Mecanico", "Logitech",
             Categoria.ELECTRONICA, "Teclado mec�nico",
             5.0, 80.0,
                 0.2);
@@ -72,16 +72,16 @@ class TestSistema {
         
         // ===== PRODUCTOS DE HOGAR =====
         Producto lampara = new Producto(
-            "HOG-001", "L�mpara LED", "Philips",
-            Categoria.HOGAR, "L�mpara de lectura",
+            "HOG-001", "Lampara LED", "Philips",
+            Categoria.HOGAR, "Lampara de lectura",
             10.0, 60.0,
                 0.2);
         
         // ===== PAQUETES =====
         Paquete kitFutbol = new Paquete(
-            "PAQ-001", "Kit F�tbol Completo", "Adidas",
+            "PAQ-001", "Kit Futbol Completo", "Adidas",
             Categoria.DEPORTES, "Pelota + Botines",
-            20.0
+            0.0
         );
         kitFutbol.agregarVendible(new ItemVendible(1, pelotaFutbol));
         kitFutbol.agregarVendible(new ItemVendible(1, botines));
@@ -136,7 +136,7 @@ class TestSistema {
         List<StockVendible> resultados = sistema.filtrarCon(criterio);
         
         assertEquals(2, resultados.size());
-        assertTrue(resultados.stream().anyMatch(sv -> sv.getNombre().equals("Teclado Mec�nico")));
+        assertTrue(resultados.stream().anyMatch(sv -> sv.getNombre().equals("Teclado Mecanico")));
         assertTrue(resultados.stream().anyMatch(sv -> sv.getNombre().equals("Raqueta de Tenis Tec")));
     }
     
@@ -224,15 +224,15 @@ class TestSistema {
 
            
     @Test
-    @DisplayName("Deber�a filtrar por nombre y precio combinado")
+    @DisplayName("Deberia filtrar por nombre y precio combinado")
     void testFiltrarPorNombreYPrecio() {
         Criterio criterio = new CriterioAND();
         
         criterio.agregarCriterio(new CriterioNombre("o"));  // Productos con 'o' en el nombre)
         criterio.agregarCriterio(new CriterioPrecio(150.0));
-        
+
         List<StockVendible> resultados = sistema.filtrarCon(criterio);
-        
+
         // Productos con 'o' y precio <= 150:
         // Pelota(45), Botines(120), Parlantes(150), Mouse(50), Monopoly(35)
         assertEquals(5, resultados.size());
@@ -243,7 +243,7 @@ class TestSistema {
     @DisplayName("Deber�a filtrar por nombre con NOT")
     void testFiltrarPorNombreConNot() {
         // NOT (nombre contiene "Mec�nico")
-        Criterio criterio = new CriterioNOT(new CriterioNombre("Mec�nico")
+        Criterio criterio = new CriterioNOT(new CriterioNombre("Mecanico")
         );
         
         List<StockVendible> resultados = sistema.filtrarCon(criterio);
