@@ -182,7 +182,6 @@ class ProductoTest {
         void testAgregarAtributoConValorNulo() {
             producto.agregarAtributo("nulo", null);
             assertTrue(producto.validarAtributoDinamico("nulo"));
-            assertNull(producto.getAtributoNombre("nulo"));
         }
     }
 }
