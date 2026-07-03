@@ -1,0 +1,627 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide circle
+
+' =========================
+' CATALOGO
+' =========================
+
+enum Categoria {
+  ELECTRONICA
+  ROPA
+  HOGAR
+  LIBROS
+  JUGUETES
+  DEPORTES
+}
+
+abstract class Vendible {
+  - String SKU
+  - String nombre
+  - String marca
+  - Categoria categoria
+  - String descripcion
+  # Double descuento
+  + Vendible(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento)
+  + String getNombre()
+  + String getDescripcion()
+  + Categoria getCategoria()
+  + String getSku()
+  + {abstract} Double getPrecioBase()
+  + {abstract} Double getPrecioFinal()
+  + {abstract} Double getPeso()
+  - void validarAtributos(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento)
+  - void validarString(String texto, String nombre)
+  - void validarCategoria(Categoria categoria, String nombre)
+  - void validarDescuento(Double descuento, String nombre)
+}
+
+class Producto {
+  - Set<Atributo<?>> atributos
+  - Double precio
+  - Double peso
+  + Producto(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento, Double precio, Double peso)
+  + Double getPrecioBase()
+  + void setPrecio(Double precio)
+  + Double getPrecioFinal()
+  + boolean validarAtributoDinamico(String nombreBuscado)
+  + <T> void agregarAtributo(String nombre, T valor)
+  + <T> T getAtributoNombre(String nombre)
+  + Double getPeso()
+}
+
+class Paquete {
+  - List<ItemVendible> vendibles
+  + Paquete(String sku, String nombre, String marca, Categoria categoria, String descripcion, Double descuento)
+  + Double getPrecioBase()
+  + Double getPrecioFinal()
+  + void agregarVendible(ItemVendible vendible)
+  + void eliminarVendible(ItemVendible vendible)
+  + Double getPeso()
+}
+
+class Atributo<T> {
+  - String nombre
+  - T valor
+  + Atributo(String nombre, T valor)
+  + String getNombre()
+  + T getValor()
+}
+
+class ItemVendible {
+  - int cantidad
+  - Vendible vendible
+  + ItemVendible(int cantidad, Vendible vendible)
+  + Double getPrecioFinal()
+  + String getNombre()
+  + Double getPeso()
+  + String getSku()
+  + int getCantidad()
+  - void validarCantidad(int cantidad)
+  + void accept(ReportVisitor visitor)
+}
+
+class StockVendible {
+  - int stock
+  - Vendible vendible
+  + StockVendible(int stock, Vendible vendible)
+  + int getStock()
+  + void setStock(int cantidad)
+  + String getNombre()
+  + Vendible getVendible()
+  + String getSku()
+}
+
+class Catalogo {
+  - List<StockVendible> stock
+  + Catalogo()
+  + List<StockVendible> getStock()
+  + void agregarVendible(StockVendible stockVendible)
+  + void armarPedido(Pedido pedido)
+  + boolean verificarStockPedido(Pedido pedido)
+  + boolean hayStockDisponible(String sku, int cantidadPedida)
+  + StockVendible buscarVendible(String sku)
+  + void restarStock(List<ItemVendible> itemVendibles)
+  + void reponerStock(List<ItemVendible> itemVendibles)
+}
+
+Vendible <|-- Producto
+Vendible <|-- Paquete
+Vendible --> Categoria
+Producto *-- "0..*" Atributo
+Paquete *-- "0..*" ItemVendible
+ItemVendible --> "1" Vendible
+StockVendible --> "1" Vendible
+Catalogo *-- "0..*" StockVendible
+Catalogo ..> Pedido
+Catalogo ..> ItemVendible
+
+' =========================
+' PEDIDO / ESTADOS
+' =========================
+
+interface EstadoPedido {
+  + void agregarVendible(Pedido pedido, ItemVendible vendible)
+  + void quitarVendible(Pedido pedido, ItemVendible vendible)
+  + void confirmar(Pedido pedido)
+  + void cancelar(Pedido pedido)
+  + void pasarAEnPreparacion(Pedido pedido)
+  + void pasarAEnviado(Pedido pedido)
+  + void pasarAEntregado(Pedido pedido)
+  + void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago)
+  + void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio)
+}
+
+class Pedido {
+  - EstadoPedido estado
+  - List<ItemVendible> vendibles
+  - List<ObservadorPedido> observadores
+  - NotaCredito notaCredito
+  - LocalDate fecha
+  - MetodoPago metodoPago
+  - MetodoEnvio metodoEnvio
+  - MedioDePago medioDePago
+  + Pedido(MetodoPago<?> metodoPago, MetodoEnvio metodoEnvio, MedioDePago medioDePago)
+  + void agregarObservador(ObservadorPedido observador)
+  + void setEstado(EstadoPedido nuevoEstado)
+  + double calcularPrecioTotal()
+  + double calcularPesoTotal()
+  + void agregarVendible(ItemVendible vendible)
+  + void quitarVendible(ItemVendible vendible)
+  + void confirmarPedido()
+  + void cancelarPedido()
+  + void pasarAEnPreparacion()
+  + void pasarAEnviado()
+  + void pasarAEntregado()
+  + EstadoPedido getEstado()
+  + List<ItemVendible> getVendibles()
+  + void generarNotaCredito(double monto, String motivo)
+  + LocalDate getFecha()
+  + NotaCredito getNotaCredito()
+  + double calcularCostoEnvio()
+  + List<ObservadorPedido> getObservadores()
+  + void setMetodoDePago(MetodoPago<?> metodoDePago, MedioDePago medioDePago)
+  + void setMetodoDeEnvio(MetodoEnvio metodoEnvio)
+  + void cobrarPedido()
+  - Double precioTotalConEnvio()
+}
+
+class Borrador{
+  + void agregarVendible(Pedido pedido, ItemVendible vendible)
+  + void quitarVendible(Pedido pedido, ItemVendible vendible)
+  + void confirmar(Pedido pedido)
+  + void cancelar(Pedido pedido)
+  + void pasarAEnPreparacion(Pedido pedido)
+  + void pasarAEnviado(Pedido pedido)
+  + void pasarAEntregado(Pedido pedido)
+  + void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago)
+  + void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio)
+}
+class Confirmado{
+  + void agregarVendible(Pedido pedido, ItemVendible vendible)
+  + void quitarVendible(Pedido pedido, ItemVendible vendible)
+  + void confirmar(Pedido pedido)
+  + void cancelar(Pedido pedido)
+  + void pasarAEnPreparacion(Pedido pedido)
+  + void pasarAEnviado(Pedido pedido)
+  + void pasarAEntregado(Pedido pedido)
+  + void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago)
+  + void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio)
+}
+class EnPreparacion{
+  + void agregarVendible(Pedido pedido, ItemVendible vendible)
+  + void quitarVendible(Pedido pedido, ItemVendible vendible)
+  + void confirmar(Pedido pedido)
+  + void cancelar(Pedido pedido)
+  + void pasarAEnPreparacion(Pedido pedido)
+  + void pasarAEnviado(Pedido pedido)
+  + void pasarAEntregado(Pedido pedido)
+  + void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago)
+  + void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio)
+}
+class Enviado{
+  + void agregarVendible(Pedido pedido, ItemVendible vendible)
+  + void quitarVendible(Pedido pedido, ItemVendible vendible)
+  + void confirmar(Pedido pedido)
+  + void cancelar(Pedido pedido)
+  + void pasarAEnPreparacion(Pedido pedido)
+  + void pasarAEnviado(Pedido pedido)
+  + void pasarAEntregado(Pedido pedido)
+  + void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago)
+  + void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio)
+}
+class Entregado{
+  + void agregarVendible(Pedido pedido, ItemVendible vendible)
+  + void quitarVendible(Pedido pedido, ItemVendible vendible)
+  + void confirmar(Pedido pedido)
+  + void cancelar(Pedido pedido)
+  + void pasarAEnPreparacion(Pedido pedido)
+  + void pasarAEnviado(Pedido pedido)
+  + void pasarAEntregado(Pedido pedido)
+  + void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago)
+  + void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio)
+}
+class Cancelado{
+  + void agregarVendible(Pedido pedido, ItemVendible vendible)
+  + void quitarVendible(Pedido pedido, ItemVendible vendible)
+  + void confirmar(Pedido pedido)
+  + void cancelar(Pedido pedido)
+  + void pasarAEnPreparacion(Pedido pedido)
+  + void pasarAEnviado(Pedido pedido)
+  + void pasarAEntregado(Pedido pedido)
+  + void setMetodoDePago(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago)
+  + void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio)
+}
+
+class NotaCredito {
+  - String id
+  - Pedido pedido
+  - double monto
+  - String motivo
+  - LocalDateTime fechaEmision
+  - NotaCredito(String id, Pedido pedido, double monto, String motivo)
+  + {static} NotaCredito crear(Pedido pedido, double monto, String motivo)
+  + String getId()
+  + Pedido getPedido()
+  + double getMonto()
+  + String getMotivo()
+  + LocalDateTime getFechaEmision()
+  + String toString()
+}
+
+class ObservadorStock {
+  - Catalogo catalogo
+  + ObservadorStock(Catalogo catalogo)
+  + void onCambioEstado(CambioEstadoEvento evento, Pedido pedido)
+}
+
+EstadoPedido <|.. Borrador
+EstadoPedido <|.. Confirmado
+EstadoPedido <|.. EnPreparacion
+EstadoPedido <|.. Enviado
+EstadoPedido <|.. Entregado
+EstadoPedido <|.. Cancelado
+
+Pedido --> "1" EstadoPedido
+Pedido *-- "0..*" ItemVendible
+Pedido o-- "0..*" ObservadorPedido
+Pedido o-- "0..1" NotaCredito
+Pedido --> MetodoPago
+Pedido --> MetodoEnvio
+Pedido --> MedioDePago
+NotaCredito --> Pedido
+ObservadorStock ..|> ObservadorPedido
+ObservadorStock --> Catalogo
+
+' =========================
+' NOTIFICACIONES
+' =========================
+
+interface ObservadorPedido {
+  + void onCambioEstado(CambioEstadoEvento evento, Pedido pedido)
+}
+
+interface MailSender {
+  + void enviarMail(String direccionDestino, String titulo, String mensaje, Object adjunto)
+}
+
+class CambioEstadoEvento {
+  - EstadoPedido estadoAnterior
+  - EstadoPedido estadoNuevo
+  + CambioEstadoEvento(EstadoPedido estadoAnterior, EstadoPedido estadoNuevo)
+  + EstadoPedido getEstadoAnterior()
+  + EstadoPedido getEstadoNuevo()
+}
+
+class NotificadorEmail {
+  - MailSender mailSender
+  - String direccionCliente
+  + NotificadorEmail(MailSender mailSender, String direccionCliente)
+  + void onCambioEstado(CambioEstadoEvento evento, Pedido pedido)
+}
+
+class GeneradorFactura {
+  + void onCambioEstado(CambioEstadoEvento evento, Pedido pedido)
+}
+
+class ServicioFidelizacion {
+  + void onCambioEstado(CambioEstadoEvento evento, Pedido pedido)
+}
+
+NotificadorEmail ..|> ObservadorPedido
+GeneradorFactura ..|> ObservadorPedido
+ServicioFidelizacion ..|> ObservadorPedido
+NotificadorEmail --> MailSender
+CambioEstadoEvento --> EstadoPedido
+ObservadorPedido ..> CambioEstadoEvento
+ObservadorPedido ..> Pedido
+
+' =========================
+' ENVIO
+' =========================
+
+interface MetodoEnvio {
+  + double calcularCosto(Pedido pedido, Direccion direccion, Sucursal sucursal)
+  + int calcularTiempo(Pedido pedido, Direccion direccion, Sucursal sucursal)
+}
+
+interface CorreoArgentina {
+  + float estimarEnvio(float peso, Direccion direccion)
+}
+
+interface EnvioExpressCalculadora {
+  + float calcularCosto(float precio)
+}
+
+class EnvioEstandar {
+  - CorreoArgentina correo
+  + EnvioEstandar(CorreoArgentina correo)
+  + double calcularCosto(Pedido pedido, Direccion direccion, Sucursal sucursal)
+  + int calcularTiempo(Pedido pedido, Direccion direccion, Sucursal sucursal)
+}
+
+class EnvioExpress {
+  - EnvioExpressCalculadora calculadora
+  + EnvioExpress(EnvioExpressCalculadora calculadora)
+  + double calcularCosto(Pedido pedido, Direccion direccion, Sucursal sucursal)
+  + int calcularTiempo(Pedido pedido, Direccion direccion, Sucursal sucursal)
+}
+
+class RetiroSucursal {
+  + double calcularCosto(Pedido pedido, Direccion direccion, Sucursal sucursal)
+  + int calcularTiempo(Pedido pedido, Direccion direccion, Sucursal sucursal)
+}
+
+class ServicioEnvio {
+  - MetodoEnvio estrategia
+  + ServicioEnvio(MetodoEnvio estrategia)
+  + void setEstrategia(MetodoEnvio estrategia)
+  + double calcularCosto(Pedido pedido, Direccion direccion, Sucursal sucursal)
+  + int calcularTiempo(Pedido pedido, Direccion direccion, Sucursal sucursal)
+}
+
+class Direccion {
+  - String calle
+  - int numero
+  - String ciudad
+  - String codigoPostal
+  + Direccion(String calle, int numero, String ciudad, String codigoPostal)
+  + String getCalle()
+  + int getNumero()
+  + String getCiudad()
+  + String getCodigoPostal()
+}
+
+interface Sucursal {
+  + boolean hayStock(Pedido pedido)
+}
+
+MetodoEnvio <|.. EnvioEstandar
+MetodoEnvio <|.. EnvioExpress
+MetodoEnvio <|.. RetiroSucursal
+EnvioEstandar --> CorreoArgentina
+EnvioExpress --> EnvioExpressCalculadora
+ServicioEnvio --> MetodoEnvio
+MetodoEnvio ..> Pedido
+MetodoEnvio ..> Direccion
+MetodoEnvio ..> Sucursal
+Sucursal ..> Pedido
+
+' =========================
+' PAGO
+' =========================
+
+abstract class MetodoPago<T extends MedioDePago> {
+  + final void procesarPago(Double monto, T medio)
+  # {abstract} void validarDatos(Double monto, T medio)
+  # {abstract} void reservarFondos(Double monto, T medio)
+  # {abstract} void ejecutarTransaccion(Double monto, T medio)
+  # void notificarResultado(Double monto, T medio)
+}
+
+class MedioDePago
+
+class TarjetaDeCredito {
+  - int nroTarjeta
+  - int cvv
+  - Date fechaVencimiento
+  + TarjetaDeCredito(int nroTarjeta, int cvv, Date fechaVencimiento)
+  + int getCvv()
+  + int getNroTarjeta()
+  + Date getFechaVencimiento()
+}
+
+class CuentaCorriente {
+  - int cbu
+  - String alias
+  + int getCbu()
+  + String getAlias()
+}
+
+class BilleteraVirtual {
+  - Double saldo
+  + BilleteraVirtual(Double saldo)
+  + Double getSaldo()
+}
+
+class PagoPorTarjetaDeCredito {
+  # void validarDatos(Double monto, TarjetaDeCredito medio)
+  # void reservarFondos(Double monto, TarjetaDeCredito medio)
+  # void ejecutarTransaccion(Double monto, TarjetaDeCredito medio)
+}
+
+class PagoTransferenciaBancaria {
+  # void validarDatos(Double monto, CuentaCorriente medio)
+  # void reservarFondos(Double monto, CuentaCorriente medio)
+  # void ejecutarTransaccion(Double monto, CuentaCorriente medio)
+}
+
+class PagoPorBilleteraVirtual {
+  # void validarDatos(Double monto, BilleteraVirtual medio)
+  # void reservarFondos(Double monto, BilleteraVirtual medio)
+  # void ejecutarTransaccion(Double monto, BilleteraVirtual medio)
+}
+
+class ApiTarjeta {
+  + {static} void validarDatos(int nroTarjeta, int cvv, Date fechaVencimiento)
+  + {static} void reservarFondos(int nroTarjeta, int cvv, Date fechaVencimiento)
+  + {static} void ejecutarTransaccion(int nroTarjeta, int cvv, Date fechaVencimiento)
+}
+
+class ApiTransferenciaBancaria {
+  + {static} void validarDatos(int cbu, String alias)
+  + {static} void reservarFondos(int cbu, String alias)
+  + {static} void ejecutarTransaccion(int cbu, String alias)
+}
+
+class ApiBilleteraVirtual {
+  + {static} void validarDatos(Double monto, Double saldo)
+  + {static} void reservarFondos(Double monto, Double saldo)
+  + {static} void ejecutarTransaccion(Double monto, Double saldo)
+}
+
+MedioDePago <|-- TarjetaDeCredito
+MedioDePago <|-- CuentaCorriente
+MedioDePago <|-- BilleteraVirtual
+MetodoPago <|-- PagoPorTarjetaDeCredito
+MetodoPago <|-- PagoTransferenciaBancaria
+MetodoPago <|-- PagoPorBilleteraVirtual
+PagoPorTarjetaDeCredito ..> TarjetaDeCredito
+PagoPorTarjetaDeCredito ..> ApiTarjeta
+PagoTransferenciaBancaria ..> CuentaCorriente
+PagoTransferenciaBancaria ..> ApiTransferenciaBancaria
+PagoPorBilleteraVirtual ..> BilleteraVirtual
+PagoPorBilleteraVirtual ..> ApiBilleteraVirtual
+
+' =========================
+' CRITERIOS DE BUSQUEDA
+' =========================
+
+abstract class Criterio {
+  + void agregarCriterio(Criterio criterio)
+  + void eliminarCriterio(Criterio criterio)
+  + {abstract} boolean validar(Vendible vendible)
+}
+
+abstract class CriterioCompuesto {
+  # List<Criterio> criterios
+  + CriterioCompuesto()
+  + void agregarCriterio(Criterio criterio)
+  + void eliminarCriterio(Criterio criterio)
+}
+
+class CriterioAND {
+  + boolean validar(Vendible vendible)
+}
+
+class CriterioOR {
+  + boolean validar(Vendible vendible)
+}
+
+class CriterioNOT {
+  - Criterio criterio
+  + CriterioNOT(Criterio criterio)
+  + boolean validar(Vendible vendible)
+}
+
+class CriterioNombre {
+  - String texto
+  + CriterioNombre(String nombre)
+  + boolean validar(Vendible vendible)
+}
+
+class CriterioDescripcion {
+  - String texto
+  + CriterioDescripcion(String descripcion)
+  + boolean validar(Vendible vendible)
+}
+
+class CriterioCategoria {
+  - Categoria categoria
+  + CriterioCategoria(Categoria categoria)
+  + boolean validar(Vendible vendible)
+}
+
+class CriterioPrecio {
+  - double precioMaximo
+  + CriterioPrecio(Double precio)
+  + boolean validar(Vendible vendible)
+}
+
+Criterio <|-- CriterioCompuesto
+CriterioCompuesto <|-- CriterioAND
+CriterioCompuesto <|-- CriterioOR
+Criterio <|-- CriterioNOT
+Criterio <|-- CriterioNombre
+Criterio <|-- CriterioDescripcion
+Criterio <|-- CriterioCategoria
+Criterio <|-- CriterioPrecio
+CriterioCompuesto *-- "0..*" Criterio
+CriterioNOT --> "1" Criterio
+CriterioCategoria --> Categoria
+Criterio ..> Vendible
+
+' =========================
+' REPORTES
+' =========================
+
+interface ReportVisitor {
+  + void visitProducto(Producto producto, int cantidadVendida, double precioTotal)
+  + void visitPaquete(Paquete paquete, int cantidadVendida, double precioTotal)
+}
+
+class ReporteProductosMasVendidos {
+  - LocalDate fechaInicio
+  - LocalDate fechaFin
+  - Map<String, DatosVenta> ventas
+  + ReporteProductosMasVendidos(LocalDate fechaInicio, LocalDate fechaFin)
+  + LocalDate getFechaInicio()
+  + LocalDate getFechaFin()
+  + void visitProducto(Producto producto, int cantidadVendida, double precioTotal)
+  + void visitPaquete(Paquete paquete, int cantidadVendida, double precioTotal)
+  + List<ItemVenta> getResultados()
+}
+
+class DatosVenta {
+  ~ Vendible vendible
+  ~ int cantidadTotal
+  ~ double precioTotal
+  ~ DatosVenta(Vendible vendible)
+  ~ void agregarVenta(int cantidad, double precio)
+}
+
+class ItemVenta {
+  - String sku
+  - String nombre
+  - int cantidad
+  - double precioPromedio
+  + ItemVenta(String sku, String nombre, int cantidad, double precioPromedio)
+  + String getSku()
+  + String getNombre()
+  + int getCantidad()
+  + double getPrecioPromedio()
+}
+
+class ExportadorReporte {
+  + {static} String exportarTexto(ReporteProductosMasVendidos reporte)
+  + {static} String exportarCSV(ReporteProductosMasVendidos reporte)
+  + {static} String exportarHTML(ReporteProductosMasVendidos reporte)
+}
+
+ReportVisitor <|.. ReporteProductosMasVendidos
+ReportVisitor ..> Producto
+ReportVisitor ..> Paquete
+ReporteProductosMasVendidos *-- "0..*" DatosVenta
+ReporteProductosMasVendidos ..> ItemVenta
+DatosVenta --> Vendible
+ExportadorReporte ..> ReporteProductosMasVendidos
+ExportadorReporte ..> ItemVenta
+ItemVendible ..> ReportVisitor
+
+' =========================
+' SISTEMA
+' =========================
+
+class Sistema {
+  - Catalogo catalogo
+  - ArrayList<Pedido> pedidos
+  + Sistema(Catalogo catalogo)
+  + List<StockVendible> filtrarCon(Criterio criterio)
+  + void armarPedido(Pedido pedido)
+  + ReporteProductosMasVendidos generarReporteProductosMasVendidos(LocalDate inicio, LocalDate fin)
+  - boolean estaDentroDelPeriodo(LocalDate fecha, LocalDate inicio, LocalDate fin)
+  + void setMetodoPagoPedido(Pedido pedido, MetodoPago<?> metodoPago, MedioDePago medioDePago)
+  + void setMetodoEnvioPedido(Pedido pedido, MetodoEnvio metodoEnvio)
+}
+
+Sistema --> Catalogo
+Sistema *-- "0..*" Pedido
+Sistema ..> Criterio
+Sistema ..> StockVendible
+Sistema ..> ObservadorStock
+Sistema ..> ReporteProductosMasVendidos
+Sistema ..> ItemVendible
+Sistema ..> MetodoPago
+Sistema ..> MedioDePago
+Sistema ..> MetodoEnvio
+@enduml
