@@ -1,5 +1,4 @@
 package Catalogo;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -8,10 +7,7 @@ import pedido.Cancelado;
 import pedido.Borrador;
 import testutils.PedidoFactory;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class CatalogoTest {
 

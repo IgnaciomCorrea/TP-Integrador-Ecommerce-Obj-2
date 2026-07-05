@@ -29,7 +29,7 @@ class ProductoTest {
     @DisplayName("Deberia crear un producto con todos sus atributos correctamente")
     void testCrearProducto() {
         assertNotNull(producto);
-        // assertEquals(SKU, producto.getSKU());
+        assertEquals(SKU, producto.getSku());
         assertEquals(NOMBRE, producto.getNombre());
         assertEquals(CATEGORIA, producto.getCategoria());
         assertEquals(DESCRIPCION, producto.getDescripcion());
