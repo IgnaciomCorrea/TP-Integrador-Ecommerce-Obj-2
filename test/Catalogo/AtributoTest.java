@@ -16,29 +16,31 @@ class AtributoTest {
     }
 
     @Test
-    @DisplayName("Debería modificar el nombre")
+    @DisplayName("Debería modificar el nombre únicamente")
     void testSetNombre() {
-        Atributo<Integer> atributo = new Atributo<>("edad", 30);
-        atributo.setNombre("años");
-        assertEquals("años", atributo.getNombre());
+        Atributo<Integer> atributo = new Atributo<>("altura", 30);
+        atributo.setNombre("ancho");
+        assertEquals("ancho", atributo.getNombre());
+        assertEquals(30, atributo.getValor());
     }
 
     @Test
     @DisplayName("Debería modificar el valor")
     void testSetValor() {
-        Atributo<Double> atributo = new Atributo<>("peso", 75.5);
+        Atributo<Double> atributo = new Atributo<>("precioDolar", 75.5);
         atributo.setValor(80.0);
+        assertEquals("precioDolar", atributo.getNombre());
         assertEquals(80.0, atributo.getValor());
     }
 
     @Test
     @DisplayName("Debería funcionar con tipos diferentes")
     void testDiferentesTipos() {
-        Atributo<String> str = new Atributo<>("nombre", "Juan");
-        Atributo<Integer> entero = new Atributo<>("edad", 25);
-        Atributo<Boolean> bool = new Atributo<>("activo", true);
+        Atributo<String> str = new Atributo<>("color", "verde");
+        Atributo<Integer> entero = new Atributo<>("ancho", 25);
+        Atributo<Boolean> bool = new Atributo<>("importado", true);
 
-        assertEquals("Juan", str.getValor());
+        assertEquals("verde", str.getValor());
         assertEquals(25, entero.getValor());
         assertTrue(bool.getValor());
     }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import testutils.PedidoFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -16,15 +17,16 @@ import static org.mockito.Mockito.*;
 class RetiroSucursalTest {
 
     private RetiroSucursal retiroSucursal;
+    private Pedido pedido;
 
     @BeforeEach
     void setUp() {
         retiroSucursal = new RetiroSucursal();
+        pedido = PedidoFactory.pedido();
     }
 
     @Test
     void calcularCosto_siempreCero() {
-        Pedido pedido = mock(Pedido.class);
         Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
         Sucursal sucursal = mock(Sucursal.class);
 
@@ -34,7 +36,6 @@ class RetiroSucursalTest {
 
     @Test
     void calcularTiempo_conStockLocal_debeRetornar0() {
-        Pedido pedido = mock(Pedido.class);
         Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
         Sucursal sucursal = mock(Sucursal.class);
         when(sucursal.hayStock(pedido)).thenReturn(true);
@@ -45,7 +46,6 @@ class RetiroSucursalTest {
 
     @Test
     void calcularTiempo_sinStockLocal_debeRetornar3() {
-        Pedido pedido = mock(Pedido.class);
         Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
         Sucursal sucursal = mock(Sucursal.class);
         when(sucursal.hayStock(pedido)).thenReturn(false);
@@ -56,7 +56,6 @@ class RetiroSucursalTest {
 
     @Test
     void calcularTiempo_siSucursalEsNull_debeLanzarExcepcion() {
-        Pedido pedido = mock(Pedido.class);
         Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
 
         assertThrows(NullPointerException.class,

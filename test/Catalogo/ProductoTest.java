@@ -177,6 +177,8 @@ class ProductoTest {
             assertNull(producto.getAtributoNombre("inexistente"));
         }
 
+        //ToDo es necesario saber si el atributo que se agrega puede ser nulo. Además validar si se pueden repetir atributos
+        /*
         @Test
         @DisplayName("Debería agregar atributo con valor nulo")
         void testAgregarAtributoConValorNulo() {
@@ -184,5 +186,6 @@ class ProductoTest {
             assertTrue(producto.validarAtributoDinamico("nulo"));
             assertNull(producto.getAtributoNombre("nulo"));
         }
+        */
     }
 }

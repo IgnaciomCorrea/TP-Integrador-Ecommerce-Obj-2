@@ -3,6 +3,7 @@ package pedido;
 import Catalogo.ItemVendible;
 import direccion.Direccion;
 import envio.MetodoEnvio;
+import exceptions.ConstructorException;
 import metodoPago.MedioDePago;
 import metodoPago.MetodoPago;
 import notificaciones.CambioEstadoEvento;
@@ -24,6 +25,16 @@ public class Pedido {
     private MedioDePago medioDePago;
 
     public Pedido(MetodoPago<?> metodoPago, MetodoEnvio metodoEnvio, MedioDePago medioDePago) {
+        if (metodoPago == null) {
+            throw new ConstructorException("El método de pago no puede ser nulo");
+        }
+        if (metodoEnvio == null) {
+            throw new ConstructorException("El método de envío no puede ser nulo");
+        }
+        if (medioDePago == null) {
+            throw new ConstructorException("El medio de pago no puede ser nulo");
+        }
+
         this.estado = new Borrador();
         this.vendibles = new ArrayList<>();
         this.observadores = new ArrayList<>();
