@@ -18,4 +18,9 @@ public class Enviado extends EstadoPedido {
     public boolean debeEnviarEmail() {
         return true;
     }
+
+    @Override
+    public boolean debeReponerStockAlCancelar() {
+        return true;
+    }
 }
