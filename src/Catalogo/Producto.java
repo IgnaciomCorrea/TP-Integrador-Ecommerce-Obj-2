@@ -1,5 +1,5 @@
 package Catalogo;
-import exceptions.CatalogoExcepcion;
+import exceptions.CatalogoException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,18 +46,18 @@ public class Producto extends Vendible{
 
     public <T> void agregarAtributo(String nombre, T valor) {
         if (nombre == null || nombre.isBlank()) {
-            throw new CatalogoExcepcion("El nombre del atributo no puede ser null o vacío");
+            throw new CatalogoException("El nombre del atributo no puede ser null o vacío");
         }
         if (valor == null) {
-            throw new CatalogoExcepcion("El valor del atributo no puede ser null");
+            throw new CatalogoException("El valor del atributo no puede ser null");
         }
         String nombreLower = nombre.toLowerCase();
 
         if (NOMBRES_ATRIBUTOS_FIJOS.contains(nombreLower)) {
-            throw new CatalogoExcepcion("El nombre '" + nombre + "' está reservado para un atributo fijo del producto");
+            throw new CatalogoException("El nombre '" + nombre + "' está reservado para un atributo fijo del producto");
         }
         if (validarAtributoDinamico(nombre)) {
-            throw new CatalogoExcepcion("Ya existe un atributo dinámico con el nombre: " + nombre);
+            throw new CatalogoException("Ya existe un atributo dinámico con el nombre: " + nombre);
         }
         atributos.add(new Atributo<>(nombre, valor));
     }
