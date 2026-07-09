@@ -205,25 +205,27 @@ class PedidoTest {
     @Nested
     class ObservadorStockTest {
         private Pedido pedidoConStockObserver;
+        private Producto producto1;
 
         @BeforeEach
         void setUp() {
             pedidoConStockObserver = PedidoFactory.pedido();
             pedidoConStockObserver.agregarObservador(new ObservadorStock(catalogoMock));
+            producto1 = new Producto("SKU001", "Teclado", "Logitech", Categoria.ELECTRONICA,
+                    "Teclado", 0.0, 100.0, 0.5);
         }
 
         @Test
-        void alConfirmarPedido_debeLlamarARestarStock() {
+        void alConfirmarPedido_debeLlamarAArmarPedido() {
             ItemVendible item = new ItemVendible(1, producto1);
             pedidoConStockObserver.agregarVendible(item);
 
             pedidoConStockObserver.confirmarPedido();
 
-            ArgumentCaptor<List<ItemVendible>> captor = ArgumentCaptor.forClass(List.class);
-            verify(catalogoMock).restarStock(captor.capture());
-            List<ItemVendible> items = captor.getValue();
-            assertEquals(1, items.size());
-            assertEquals("SKU001", items.get(0).getSku());
+            // El observador llama a catalogo.armarPedido(pedido)
+            verify(catalogoMock, times(1)).armarPedido(pedidoConStockObserver);
+            // No se llama directamente a restarStock
+            verify(catalogoMock, never()).restarStock(anyList());
         }
 
         @Test

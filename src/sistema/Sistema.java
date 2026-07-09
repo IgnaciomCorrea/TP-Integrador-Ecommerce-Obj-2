@@ -9,6 +9,7 @@ import Catalogo.Catalogo;
 import Catalogo.StockVendible;
 import CriterioBusqueda.Criterio;
 import envio.MetodoEnvio;
+import exceptions.PedidoExcepcion;
 import metodoPago.*;
 import pedido.Entregado;
 import pedido.ObservadorStock;
@@ -36,7 +37,7 @@ public class Sistema {
 
 	public void armarPedido(Pedido pedido){
 		if (pedido == null) {
-			throw new IllegalArgumentException("El pedido no puede ser nulo");
+			throw new PedidoExcepcion("El pedido no puede ser nulo");
 		}
 
 		pedido.agregarObservador(new ObservadorStock(catalogo));
@@ -52,7 +53,7 @@ public class Sistema {
 	public ReporteProductosMasVendidos generarReporteProductosMasVendidos(LocalDate inicio, LocalDate fin) {
 		ReporteProductosMasVendidos visitor = new ReporteProductosMasVendidos(inicio, fin);
 		for (Pedido pedido : pedidos) {
-			if (pedido.getEstado() instanceof Entregado && estaDentroDelPeriodo(pedido.getFecha(), inicio, fin)) {
+			if (pedido.getEstado().esEntregado() && estaDentroDelPeriodo(pedido.getFecha(), inicio, fin)) {
 				for (ItemVendible item : pedido.getVendibles()) {
 					item.accept(visitor);
 				}
@@ -60,7 +61,6 @@ public class Sistema {
 		}
 		return visitor;
 	}
-
 	private boolean estaDentroDelPeriodo(LocalDate fecha, LocalDate inicio, LocalDate fin) {
 		return !fecha.isBefore(inicio) && !fecha.isAfter(fin);
 	}

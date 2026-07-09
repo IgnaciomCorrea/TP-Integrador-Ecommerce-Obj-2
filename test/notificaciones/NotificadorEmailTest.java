@@ -46,7 +46,7 @@ class NotificadorEmailTest {
         );
 
         assertEquals(direccionCliente, captorDestino.getValue());
-        assertEquals("Cambio de estado de tu pedido", captorTitulo.getValue());
+        assertEquals("Actualización de tu pedido", captorTitulo.getValue());
         assertTrue(captorMensaje.getValue().contains("Confirmado"));
         assertNull(captorAdjunto.getValue());
     }
