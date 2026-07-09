@@ -1,6 +1,9 @@
 package pedido;
 
 import envio.MetodoEnvio;
+import exceptions.CatalogoException;
+import exceptions.ConstructorException;
+import exceptions.PedidoExcepcion;
 import metodoPago.MedioDePago;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -36,11 +39,11 @@ class NotaCreditoTest {
             MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
             MedioDePago medioDePago = mock(MedioDePago.class);
 
-            assertThrows(NullPointerException.class,
+            assertThrows(ConstructorException.class,
                     () -> new Pedido(null, metodoEnvio, medioDePago));
-            assertThrows(NullPointerException.class,
+            assertThrows(ConstructorException.class,
                     () -> new Pedido(pago, null, medioDePago));
-            assertThrows(NullPointerException.class,
+            assertThrows(ConstructorException.class,
                     () -> new Pedido(pago, metodoEnvio, null));
         }
     }

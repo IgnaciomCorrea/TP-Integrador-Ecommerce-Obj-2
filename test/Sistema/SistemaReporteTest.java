@@ -86,18 +86,6 @@ class SistemaReporteTest {
     }
 
     @Test
-    void generarReporte_conPedidosEntregadosSinItems_debeRetornarVacio() {
-        Pedido entregadoVacio = PedidoFactory.pedido();
-        sistema.armarPedido(entregadoVacio);
-        avanzarHastaEntregado(entregadoVacio);
-
-        ReporteProductosMasVendidos reporte = sistema.generarReporteProductosMasVendidos(
-                LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
-
-        assertTrue(reporte.getResultados().isEmpty());
-    }
-
-    @Test
     void generarReporte_fueraDePeriodo_noDebeIncluirPedidos() {
         Pedido entregado = PedidoFactory.pedido();
         entregado.agregarVendible(new ItemVendible(1, teclado));

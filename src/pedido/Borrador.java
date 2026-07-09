@@ -6,7 +6,7 @@ import exceptions.PedidoExcepcion;
 import metodoPago.MedioDePago;
 import metodoPago.MetodoPago;
 
-public class Borrador implements EstadoPedido {
+public class Borrador extends EstadoPedido {
 
     @Override
     public void agregarVendible(Pedido pedido, ItemVendible vendible) {
@@ -29,23 +29,7 @@ public class Borrador implements EstadoPedido {
 
     @Override
     public void cancelar(Pedido pedido) {
-        // No hay stock que reponer ni reembolso porque no se confirmó
         pedido.setEstado(new Cancelado());
-    }
-
-    @Override
-    public void pasarAEnPreparacion(Pedido pedido) {
-        throw new PedidoExcepcion("No se puede pasar a preparación desde Borrador");
-    }
-
-    @Override
-    public void pasarAEnviado(Pedido pedido) {
-        throw new PedidoExcepcion("No se puede pasar a enviado desde Borrador");
-    }
-
-    @Override
-    public void pasarAEntregado(Pedido pedido) {
-        throw new PedidoExcepcion("No se puede pasar a entregado desde Borrador");
     }
 
     @Override
@@ -54,9 +38,7 @@ public class Borrador implements EstadoPedido {
     }
 
     @Override
-    public void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio){
+    public void setMetodoDeEnvio(Pedido pedido, MetodoEnvio metodoEnvio) {
         pedido.asignarMetodoDeEnvio(metodoEnvio);
     }
-
-
 }
