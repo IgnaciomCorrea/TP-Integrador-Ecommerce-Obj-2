@@ -13,5 +13,5 @@ public class PagoPorBilleteraVirtual extends MetodoPago<BilleteraVirtual>{
     protected void ejecutarTransaccion(Double monto, BilleteraVirtual medio) {
     	ApiBilleteraVirtual.ejecutarTransaccion(monto, medio.getSaldo());
     }
-	
+
 }
