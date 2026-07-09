@@ -11,8 +11,8 @@ import CriterioBusqueda.Criterio;
 import envio.MetodoEnvio;
 import exceptions.PedidoExcepcion;
 import metodoPago.*;
-import pedido.Entregado;
 import pedido.ObservadorStock;
+import notificaciones.GeneradorFactura;
 import pedido.Pedido;
 import reportes.ReporteProductosMasVendidos;
 import Catalogo.ItemVendible;
@@ -21,11 +21,12 @@ public class Sistema {
 
 	private Catalogo catalogo;
 	private ArrayList<Pedido> pedidos;
+	private GeneradorFactura generadorFactura;
 
 	public Sistema(Catalogo catalogo) {
 		this.catalogo = catalogo;
 		this.pedidos = new ArrayList<>();
-
+		this.generadorFactura = new GeneradorFactura();
 	}
 
 	public List<StockVendible> filtrarCon(Criterio criterio) {
@@ -41,7 +42,9 @@ public class Sistema {
 		}
 
 		pedido.agregarObservador(new ObservadorStock(catalogo));
+		pedido.agregarObservador(generadorFactura);
 		pedidos.add(pedido);
+
 
 		if (catalogo.verificarStockPedido(pedido)) {
 			pedido.confirmarPedido();
