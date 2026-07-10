@@ -9,6 +9,8 @@ import envio.MetodoEnvio;
 import exceptions.ConstructorException;
 import exceptions.PedidoExcepcion;
 import metodoPago.MedioDePago;
+import notificaciones.CambioEstadoEvento;
+import notificaciones.ObservadorPedido;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -239,7 +241,7 @@ class PedidoTest {
         }
 
         @Test
-        void alCancelarDesdeEnviado_noDebeReponerStock() {
+        void alCancelarDesdeEnviado_debeReponerStock() {
             pedidoConStockObserver.agregarVendible(new ItemVendible(1, producto1));
             pedidoConStockObserver.confirmarPedido();
             pedidoConStockObserver.pasarAEnPreparacion();
@@ -247,7 +249,7 @@ class PedidoTest {
 
             pedidoConStockObserver.cancelarPedido();
 
-            verify(catalogoMock, never()).reponerStock(anyList());
+            verify(catalogoMock, times(1)).reponerStock(anyList());
         }
     }
 
@@ -416,6 +418,143 @@ class PedidoTest {
             assertEquals(1, pago.getValidaciones());
             assertEquals(1, pago.getReservas());
             assertEquals(1, pago.getNotificaciones());
+        }
+    }
+
+    @Nested
+    class NotaCreditoUnica {
+
+        @Test
+        void generarNotaCredito_cuandoYaExiste_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.cancelarPedido(); // genera primera nota
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.generarNotaCredito(50.0, "Intento manual"));
+        }
+
+        @Test
+        void generarNotaCredito_conMontoYMotivoValidos_debeCrearNota() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.cancelarPedido();
+
+            NotaCredito nota = pedido.getNotaCredito();
+            assertNotNull(nota);
+            assertEquals(100.0, nota.getMonto(), 0.001);
+            assertTrue(nota.getMotivo().contains("Confirmado"));
+        }
+    }
+
+    @Nested
+    class OperacionesEnEstadosNoBorrador {
+
+        @Test
+        void agregarVendible_desdeConfirmado_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido(); // ahora está en Confirmado
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto2)));
+        }
+
+        @Test
+        void quitarVendible_desdeConfirmado_debeLanzarExcepcion() {
+            ItemVendible item = new ItemVendible(1, producto1);
+            pedido.agregarVendible(item);
+            pedido.confirmarPedido(); // ahora está en Confirmado
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.quitarVendible(item));
+        }
+
+        @Test
+        void agregarVendible_desdeEnPreparacion_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.pasarAEnPreparacion();
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto2)));
+        }
+
+        @Test
+        void agregarVendible_desdeEnviado_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.pasarAEnPreparacion();
+            pedido.pasarAEnviado();
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto2)));
+        }
+
+        @Test
+        void agregarVendible_desdeEntregado_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.pasarAEnPreparacion();
+            pedido.pasarAEnviado();
+            pedido.pasarAEntregado();
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto2)));
+        }
+
+        @Test
+        void agregarVendible_desdeCancelado_debeLanzarExcepcion() {
+            pedido.cancelarPedido();
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto1)));
+        }
+    }
+
+    @Nested
+    class NotificacionDeCambioEstado {
+
+        @Test
+        void setEstado_debeNotificarATodosLosObservadores() {
+            ObservadorPedido obs1 = mock(ObservadorPedido.class);
+            ObservadorPedido obs2 = mock(ObservadorPedido.class);
+            pedido.agregarObservador(obs1);
+            pedido.agregarObservador(obs2);
+
+            pedido.setEstado(new Confirmado());
+
+            verify(obs1, times(1)).onCambioEstado(any(CambioEstadoEvento.class), eq(pedido));
+            verify(obs2, times(1)).onCambioEstado(any(CambioEstadoEvento.class), eq(pedido));
+        }
+
+        @Test
+        void setEstado_sinObservadores_noDebeLanzarExcepcion() {
+            assertDoesNotThrow(() -> pedido.setEstado(new Confirmado()));
+            assertTrue(pedido.getEstado() instanceof Confirmado);
+        }
+    }
+
+    @Nested
+    class CostoEnvio {
+
+        @Test
+        void calcularCostoEnvio_conDireccionYSucursal_debeUsarMetodoEnvioYDevolverCosto() {
+            PagoDummy pago = new PagoDummy();
+            MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
+            MedioDePago medioDePago = mock(MedioDePago.class);
+            Pedido p = new Pedido(pago, metodoEnvio, medioDePago);
+
+            Direccion direccion = mock(Direccion.class);
+            Sucursal sucursal = mock(Sucursal.class);
+            when(metodoEnvio.calcularCosto(p, direccion, sucursal)).thenReturn(99.0);
+
+            double costo = p.calcularCostoEnvio(direccion, sucursal);
+            assertEquals(99.0, costo, 0.001);
+            verify(metodoEnvio, times(1)).calcularCosto(p, direccion, sucursal);
+        }
+
+        @Test
+        void calcularCostoEnvio_sinParametros_debeRetornarCero() {
+            assertEquals(0.0, pedido.calcularCostoEnvio());
         }
     }
 }

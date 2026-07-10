@@ -9,9 +9,10 @@ public class Factura {
         this.precioEnvio = precioEnvio;
     }
 
-    public void imprimirFactura(){
-        System.out.println("Precio Producto: " + this.precioProducto + "\n Precio Envio: " + +this.precioEnvio + "\nTotal =" + this.precioProducto + this.precioEnvio);
+    public void imprimirFactura() {
+        double total = this.precioProducto + this.precioEnvio;
+        System.out.println("Precio Producto: " + this.precioProducto +
+                "\nPrecio Envio: " + this.precioEnvio +
+                "\nTotal = " + total);
     }
-
-
 }

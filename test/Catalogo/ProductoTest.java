@@ -3,6 +3,7 @@ package Catalogo;
 import static org.junit.jupiter.api.Assertions.*;
 
 import exceptions.CatalogoExcepcion;
+import exceptions.CatalogoException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -204,35 +205,35 @@ class ProductoTest {
         @DisplayName("Agregar atributo con nombre existente debe lanzar CatalogoExcepcion")
         void agregarAtributo_conNombreExistente_debeLanzarExcepcion() {
             producto.agregarAtributo("color", "negro");
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("color", "rojo"));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre null debe lanzar CatalogoExcepcion")
         void agregarAtributo_conNombreNull_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo(null, "valor"));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre vacío debe lanzar CatalogoExcepcion")
         void agregarAtributo_conNombreVacio_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("", "valor"));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre solo espacios debe lanzar CatalogoExcepcion")
         void agregarAtributo_conNombreSoloEspacios_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("   ", "valor"));
         }
 
         @Test
         @DisplayName("Agregar atributo con valor null debe lanzar CatalogoExcepcion")
         void agregarAtributo_conValorNull_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("peso", null));
         }
 
@@ -247,65 +248,65 @@ class ProductoTest {
         @Test
         @DisplayName("Agregar atributo con nombre 'sku' debe lanzar excepción (reservado)")
         void agregarAtributo_conNombreSku_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("sku", "valor"));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre 'nombre' debe lanzar excepción (reservado)")
         void agregarAtributo_conNombreNombre_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("nombre", "valor"));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre 'marca' debe lanzar excepción (reservado)")
         void agregarAtributo_conNombreMarca_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("marca", "valor"));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre 'categoria' debe lanzar excepción (reservado)")
         void agregarAtributo_conNombreCategoria_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("categoria", "valor"));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre 'descripcion' debe lanzar excepción (reservado)")
         void agregarAtributo_conNombreDescripcion_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("descripcion", "valor"));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre 'descuento' debe lanzar excepción (reservado)")
         void agregarAtributo_conNombreDescuento_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("descuento", 10.0));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre 'precio' debe lanzar excepción (reservado)")
         void agregarAtributo_conNombrePrecio_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("precio", 100.0));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre 'peso' debe lanzar excepción (reservado)")
         void agregarAtributo_conNombrePeso_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("peso", 2.5));
         }
 
         @Test
         @DisplayName("Agregar atributo con nombre en mayúsculas como 'SKU' debe lanzar excepción (case insensitive)")
         void agregarAtributo_conNombreMayusculasReservado_debeLanzarExcepcion() {
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("SKU", "valor"));
-            assertThrows(CatalogoExcepcion.class,
+            assertThrows(CatalogoException.class,
                     () -> producto.agregarAtributo("PESO", 5.0));
         }
 

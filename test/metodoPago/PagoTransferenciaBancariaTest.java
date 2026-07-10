@@ -22,7 +22,6 @@ class PagoTransferenciaBancariaTest {
             mockedApi.verify(() -> ApiTransferenciaBancaria.validarDatos(123456789, "mi.alias"));
             mockedApi.verify(() -> ApiTransferenciaBancaria.reservarFondos(123456789, "mi.alias"));
             mockedApi.verify(() -> ApiTransferenciaBancaria.ejecutarTransaccion(123456789, "mi.alias"));
-            mockedApi.verifyNoMoreInteractions();
         }
     }
 

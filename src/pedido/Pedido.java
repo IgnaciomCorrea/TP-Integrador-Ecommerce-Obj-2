@@ -4,6 +4,7 @@ import Catalogo.ItemVendible;
 import direccion.Direccion;
 import envio.MetodoEnvio;
 import exceptions.ConstructorException;
+import exceptions.PedidoExcepcion;
 import metodoPago.MedioDePago;
 import metodoPago.MetodoPago;
 import notificaciones.CambioEstadoEvento;
@@ -104,7 +105,7 @@ public class Pedido {
 
     public void generarNotaCredito(double monto, String motivo) {
         if (this.notaCredito != null) {
-            throw new IllegalStateException("El pedido ya tiene una nota de crédito asociada");
+            throw new PedidoExcepcion("El pedido ya tiene una nota de crédito asociada");
         }
         this.notaCredito = NotaCredito.crear(this, monto, motivo);
         System.out.println("Nota de crédito generada: " + this.notaCredito);
