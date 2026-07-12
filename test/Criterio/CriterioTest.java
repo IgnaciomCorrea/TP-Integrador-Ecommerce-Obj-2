@@ -3,7 +3,7 @@ package Criterio;
 import Catalogo.Categoria;
 import Catalogo.Producto;
 import CriterioBusqueda.*;
-import exceptions.CatalogoExcepcion;
+import exceptions.CatalogoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -201,14 +201,14 @@ class CriterioTest {
         @DisplayName("Criterio.agregarCriterio debe lanzar excepción (por defecto)")
         void agregarCriterio_enCriterioSimple_debeLanzarExcepcion() {
             Criterio simple = new CriterioNombre("test");
-            assertThrows(CatalogoExcepcion.class, () -> simple.agregarCriterio(new CriterioNombre("otro")));
+            assertThrows(CatalogoException.class, () -> simple.agregarCriterio(new CriterioNombre("otro")));
         }
 
         @Test
         @DisplayName("Criterio.eliminarCriterio debe lanzar excepción (por defecto)")
         void eliminarCriterio_enCriterioSimple_debeLanzarExcepcion() {
             Criterio simple = new CriterioNombre("test");
-            assertThrows(CatalogoExcepcion.class, () -> simple.eliminarCriterio(new CriterioNombre("otro")));
+            assertThrows(CatalogoException.class, () -> simple.eliminarCriterio(new CriterioNombre("otro")));
         }
     }
 }

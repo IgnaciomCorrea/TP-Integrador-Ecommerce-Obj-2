@@ -2,7 +2,6 @@ package Catalogo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import exceptions.CatalogoExcepcion;
 import exceptions.CatalogoException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
