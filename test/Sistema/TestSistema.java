@@ -235,10 +235,10 @@ class TestSistema {
 
         // Productos con 'o' y precio <= 150:
         // Pelota(45), Botines(120), Parlantes(150), Mouse(50), Monopoly(35)
-        assertEquals(6, resultados.size());
+        assertEquals(5, resultados.size());
     }
-    
-    
+
+
     @Test
     @DisplayName("Deber�a filtrar por nombre con NOT")
     void testFiltrarPorNombreConNot() {

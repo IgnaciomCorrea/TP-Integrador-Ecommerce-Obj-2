@@ -24,15 +24,19 @@ class EnvioExpressTest {
 
     private EnvioExpress envioExpress;
     private Pedido pedido;
+    private Producto producto1;
+    private Producto producto2;
 
     @BeforeEach
     void setUp() {
         envioExpress = new EnvioExpress(calculadoraMock);
         pedido = PedidoFactory.pedido();
 
+        producto1 = new Producto("SKU001", "Teclado", "Logitech", Categoria.ELECTRONICA,
+                "Teclado mecánico", 0.0, 100.0, 0.5);
+        producto2 = new Producto("SKU002", "Mouse", "Logitech", Categoria.ELECTRONICA,
+                "Mouse inalámbrico", 0.0, 50.0, 0.2);
 
-
-        // Agregamos al pedido productos
         pedido.agregarVendible(new ItemVendible(1, producto1));
         pedido.agregarVendible(new ItemVendible(1, producto2));
     }
@@ -42,10 +46,7 @@ class EnvioExpressTest {
         Direccion direccion = new Direccion("Av. Corrientes", 123, "Buenos Aires", "1234");
         Sucursal sucursal = mock(Sucursal.class);
 
-        // Configurar mocks para calcular precio total
-        when(itemMock1.getPrecioFinal()).thenReturn(100.0);
-        when(itemMock2.getPrecioFinal()).thenReturn(50.0);
-
+        // El precio total del pedido es 100 + 50 = 150
         when(calculadoraMock.calcularCosto(150.0f)).thenReturn(22.5f);
 
         double costo = envioExpress.calcularCosto(pedido, direccion, sucursal);

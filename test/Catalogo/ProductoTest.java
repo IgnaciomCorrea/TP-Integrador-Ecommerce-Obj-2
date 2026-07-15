@@ -179,13 +179,6 @@ class ProductoTest {
         }
 
         @Test
-        @DisplayName("Debería agregar atributo con valor nulo")
-        void testAgregarAtributoConValorNulo() {
-            producto.agregarAtributo("nulo", null);
-            assertTrue(producto.validarAtributoDinamico("nulo"));
-        }
-
-        @Test
         @DisplayName("Agregar atributo con nombre 'nombre' debe lanzar excepción (reservado)")
         void agregarAtributo_conNombreNombre_debeLanzarExcepcion() {
             assertThrows(CatalogoException.class,

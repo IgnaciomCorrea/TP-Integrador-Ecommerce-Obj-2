@@ -5,6 +5,7 @@ import Catalogo.Categoria;
 import Catalogo.ItemVendible;
 import Catalogo.Producto;
 import Catalogo.StockVendible;
+import exceptions.PedidoExcepcion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pedido.Pedido;
@@ -90,7 +91,7 @@ class SistemaReporteTest {
         Pedido pedidoVacio = PedidoFactory.pedido(); // Esto crea un pedido sin items
 
         // Verificar que armar un pedido sin items lanza excepción
-        assertThrows(IllegalStateException.class, () -> sistema.armarPedido(pedidoVacio));
+        assertThrows(PedidoExcepcion.class, () -> sistema.armarPedido(pedidoVacio));
         // O la excepción que corresponda (IllegalArgumentException, etc.)
     }
 

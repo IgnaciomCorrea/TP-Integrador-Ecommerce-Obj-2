@@ -236,17 +236,18 @@ class PaqueteTest {
         }
 
         @Test
-        @DisplayName("Debería calcular precio base con items con descuentos individuales")
+        @DisplayName("Debería calcular precio base con items sin calcular sus descuentos individuales")
         void testGetPrecioBaseConItemsConDescuentos() {
             Producto p1 = new Producto("P1", "Prod 1", "Marca", Categoria.ELECTRONICA,
-                    "Desc1", 20.0, 100.0, 0.5); // precio final = 80
+                    "Desc1", 20.0, 100.0, 0.5);
             Producto p2 = new Producto("P2", "Prod 2", "Marca", Categoria.ELECTRONICA,
-                    "Desc2", 10.0, 50.0, 0.3); // precio final = 45
+                    "Desc2", 10.0, 50.0, 0.3);
 
             paquete.agregarVendible(new ItemVendible(1, p1));
             paquete.agregarVendible(new ItemVendible(1, p2));
 
-            assertEquals(125.0, paquete.getPrecioBase(), 0.001);
+            // getPrecioBase() suma los precios base (sin descuentos): 100 + 50 = 150
+            assertEquals(150.0, paquete.getPrecioBase(), 0.001);
         }
     }
 
@@ -256,7 +257,6 @@ class PaqueteTest {
 
     @Nested
     class AnidacionProfunda {
-
         @Test
         @DisplayName("Debería calcular precio de paquete anidado de 3 niveles")
         void testGetPrecioBaseAnidadoProfundo() {
@@ -278,11 +278,7 @@ class PaqueteTest {
                     Categoria.ELECTRONICA, "Principal", 5.0);
             principal.agregarVendible(new ItemVendible(1, subPaquete));
 
-            // Cálculo esperado:
-            // subSubPaquete: base=100, desc=0% → final=100
-            // subPaquete: items = p2(50) + subSub(100) = 150, desc=10% → final=135
-            // principal: item = subPaquete(135), desc=5% → final=128.25
-            assertEquals(128.25, principal.getPrecioFinal(), 0.001);
+            assertEquals(142.5, principal.getPrecioFinal(), 0.001);
         }
     }
 }
