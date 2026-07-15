@@ -22,5 +22,7 @@ public class PagoTransferenciaBancaria extends MetodoPago<CuentaCorriente>{
                      "\nCon nro de transacción: " + ApiTransferenciaBancaria.getNroUltimaTransaccion(medio.getCbu(), medio.getAlias()) ;
     }
 
-
+    public String getCupon() {
+        return cupon;
+    }
 }
