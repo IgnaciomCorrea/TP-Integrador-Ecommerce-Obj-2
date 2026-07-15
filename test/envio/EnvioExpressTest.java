@@ -1,6 +1,8 @@
 package envio;
 
+import Catalogo.Categoria;
 import Catalogo.ItemVendible;
+import Catalogo.Producto;
 import direccion.Direccion;
 import pedido.Pedido;
 import sucursal.Sucursal;
@@ -20,12 +22,6 @@ class EnvioExpressTest {
     @Mock
     private EnvioExpressCalculadora calculadoraMock;
 
-    @Mock
-    private ItemVendible itemMock1;
-
-    @Mock
-    private ItemVendible itemMock2;
-
     private EnvioExpress envioExpress;
     private Pedido pedido;
 
@@ -36,13 +32,14 @@ class EnvioExpressTest {
 
 
 
-        pedido.agregarVendible(itemMock1);
-        pedido.agregarVendible(itemMock2);
+        // Agregamos al pedido productos
+        pedido.agregarVendible(new ItemVendible(1, producto1));
+        pedido.agregarVendible(new ItemVendible(1, producto2));
     }
 
     @Test
     void calcularCosto_debeUsarCalculadoraConPrecioTotal() {
-        Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
+        Direccion direccion = new Direccion("Av. Corrientes", 123, "Buenos Aires", "1234");
         Sucursal sucursal = mock(Sucursal.class);
 
         // Configurar mocks para calcular precio total
@@ -58,7 +55,7 @@ class EnvioExpressTest {
 
     @Test
     void calcularTiempo_debeRetornar1Dia() {
-        Direccion direccion = new Direccion("Av. Siempre Viva", 123, "Springfield", "1234");
+        Direccion direccion = new Direccion("Av. Cordoba", 321, "Buenos Aires", "4321");
         Sucursal sucursal = mock(Sucursal.class);
 
         int tiempo = envioExpress.calcularTiempo(pedido, direccion, sucursal);

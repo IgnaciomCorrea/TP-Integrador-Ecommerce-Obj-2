@@ -1,11 +1,16 @@
 package pedido;
 
 import Catalogo.Catalogo;
+import Catalogo.Categoria;
 import Catalogo.ItemVendible;
+import Catalogo.Producto;
 import direccion.Direccion;
 import envio.MetodoEnvio;
+import exceptions.ConstructorException;
 import exceptions.PedidoExcepcion;
 import metodoPago.MedioDePago;
+import notificaciones.CambioEstadoEvento;
+import notificaciones.ObservadorPedido;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,12 +31,8 @@ import static org.mockito.Mockito.*;
 class PedidoTest {
 
     private Pedido pedido;
-
-    @Mock
-    private ItemVendible itemMock1;
-
-    @Mock
-    private ItemVendible itemMock2;
+    private Producto producto1;
+    private Producto producto2;
 
     @Mock
     private Catalogo catalogoMock;
@@ -39,6 +40,10 @@ class PedidoTest {
     @BeforeEach
     void setUp() {
         pedido = PedidoFactory.pedido();
+        producto1 = new Producto("SKU001", "Teclado", "Logitech", Categoria.ELECTRONICA,
+                "Teclado mecánico", 0.0, 100.0, 0.5);
+        producto2 = new Producto("SKU002", "Mouse", "Logitech", Categoria.ELECTRONICA,
+                "Mouse inalámbrico", 0.0, 50.0, 0.2);
     }
 
     @Nested
@@ -50,15 +55,16 @@ class PedidoTest {
 
         @Test
         void agregarVendible_enBorrador_debeAgregar() {
-            pedido.agregarVendible(itemMock1);
-            assertTrue(pedido.getVendibles().contains(itemMock1));
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            assertTrue(pedido.getVendibles().stream().anyMatch(i -> i.getSku().equals("SKU001")));
         }
 
         @Test
         void quitarVendible_enBorrador_debeQuitar() {
-            pedido.agregarVendible(itemMock1);
-            pedido.quitarVendible(itemMock1);
-            assertFalse(pedido.getVendibles().contains(itemMock1));
+            ItemVendible item = new ItemVendible(1, producto1);
+            pedido.agregarVendible(item);
+            pedido.quitarVendible(item);
+            assertTrue(pedido.getVendibles().isEmpty());
         }
     }
 
@@ -74,7 +80,7 @@ class PedidoTest {
         void confirmarPedido_conVendibles_debeCobrarYPasarAConfirmado() {
             PagoDummy pago = new PagoDummy();
             Pedido pedidoConPago = PedidoFactory.pedidoConPago(pago);
-            pedidoConPago.agregarVendible(itemMock1);
+            pedidoConPago.agregarVendible(new ItemVendible(1, producto1));
 
             pedidoConPago.confirmarPedido();
 
@@ -87,7 +93,7 @@ class PedidoTest {
 
         @Test
         void confirmarPedido_desdeConfirmado_debeLanzarExcepcion() {
-            pedido.agregarVendible(itemMock1);
+            pedido.agregarVendible(new ItemVendible(1, producto1));
             pedido.confirmarPedido();
 
             assertThrows(PedidoExcepcion.class, () -> pedido.confirmarPedido());
@@ -106,8 +112,7 @@ class PedidoTest {
 
         @Test
         void cancelarPedido_desdeConfirmado_debeGenerarNotaCredito() {
-            when(itemMock1.getPrecioFinal()).thenReturn(100.0);
-            pedido.agregarVendible(itemMock1);
+            pedido.agregarVendible(new ItemVendible(1, producto1));
             pedido.confirmarPedido();
 
             pedido.cancelarPedido();
@@ -119,8 +124,9 @@ class PedidoTest {
 
         @Test
         void cancelarPedido_desdeEnviado_debeReembolsarSoloProductos() {
-            when(itemMock1.getPrecioFinal()).thenReturn(80.0);
-            pedido.agregarVendible(itemMock1);
+            Producto productoConDescuento = new Producto("SKU003", "Producto con desc", "Marca",
+                    Categoria.ELECTRONICA, "Desc", 20.0, 80.0, 0.5);
+            pedido.agregarVendible(new ItemVendible(1, productoConDescuento));
             pedido.confirmarPedido();
             pedido.pasarAEnPreparacion();
             pedido.pasarAEnviado();
@@ -128,12 +134,13 @@ class PedidoTest {
             pedido.cancelarPedido();
 
             assertTrue(pedido.getEstado() instanceof Cancelado);
-            assertEquals(80.0, pedido.getNotaCredito().getMonto(), 0.001);
+            // El precio final con descuento: 80 - (80*0.20) = 64
+            assertEquals(64.0, pedido.getNotaCredito().getMonto(), 0.001);
         }
 
         @Test
         void cancelarPedido_desdeEntregado_debeLanzarExcepcion() {
-            pedido.agregarVendible(itemMock1);
+            pedido.agregarVendible(new ItemVendible(1, producto1));
             pedido.confirmarPedido();
             pedido.pasarAEnPreparacion();
             pedido.pasarAEnviado();
@@ -147,7 +154,7 @@ class PedidoTest {
     class Transiciones {
         @Test
         void debePermitirFlujoConfirmadoPreparacionEnviadoEntregado() {
-            pedido.agregarVendible(itemMock1);
+            pedido.agregarVendible(new ItemVendible(1, producto1));
 
             pedido.confirmarPedido();
             pedido.pasarAEnPreparacion();
@@ -167,51 +174,65 @@ class PedidoTest {
     class Calculos {
         @Test
         void calcularPrecioTotal_debeSumarPreciosFinales() {
-            when(itemMock1.getPrecioFinal()).thenReturn(100.0);
-            when(itemMock2.getPrecioFinal()).thenReturn(50.0);
-
-            pedido.agregarVendible(itemMock1);
-            pedido.agregarVendible(itemMock2);
-
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.agregarVendible(new ItemVendible(1, producto2));
             assertEquals(150.0, pedido.calcularPrecioTotal(), 0.001);
         }
 
         @Test
         void calcularPesoTotal_debeSumarPesos() {
-            when(itemMock1.getPeso()).thenReturn(0.5);
-            when(itemMock2.getPeso()).thenReturn(0.2);
-
-            pedido.agregarVendible(itemMock1);
-            pedido.agregarVendible(itemMock2);
-
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.agregarVendible(new ItemVendible(1, producto2));
             assertEquals(0.7, pedido.calcularPesoTotal(), 0.001);
+        }
+
+        @Test
+        void calcularPrecioTotal_conProductoConDescuento() {
+            Producto pConDesc = new Producto("SKU003", "Producto con desc", "Marca",
+                    Categoria.ELECTRONICA, "Desc", 20.0, 100.0, 0.5);
+            pedido.agregarVendible(new ItemVendible(1, pConDesc));
+            // Precio final: 100 - (100*0.20) = 80
+            assertEquals(80.0, pedido.calcularPrecioTotal(), 0.001);
+        }
+
+        @Test
+        void calcularPesoTotal_conItemsConCantidades() {
+            // Agregamos 2 unidades del producto1 (peso 0.5 cada uno) y 3 del producto2 (peso 0.2)
+            pedido.agregarVendible(new ItemVendible(2, producto1));
+            pedido.agregarVendible(new ItemVendible(3, producto2));
+            assertEquals(2 * 0.5 + 3 * 0.2, pedido.calcularPesoTotal(), 0.001);
         }
     }
 
     @Nested
     class ObservadorStockTest {
         private Pedido pedidoConStockObserver;
+        private Producto producto1;
 
         @BeforeEach
         void setUp() {
             pedidoConStockObserver = PedidoFactory.pedido();
             pedidoConStockObserver.agregarObservador(new ObservadorStock(catalogoMock));
+            producto1 = new Producto("SKU001", "Teclado", "Logitech", Categoria.ELECTRONICA,
+                    "Teclado", 0.0, 100.0, 0.5);
         }
 
         @Test
-        void alConfirmarPedido_debeLlamarARestarStock() {
-            pedidoConStockObserver.agregarVendible(itemMock1);
+        void alConfirmarPedido_debeLlamarAArmarPedido() {
+            ItemVendible item = new ItemVendible(1, producto1);
+            pedidoConStockObserver.agregarVendible(item);
 
             pedidoConStockObserver.confirmarPedido();
 
-            ArgumentCaptor<List<ItemVendible>> captor = ArgumentCaptor.forClass(List.class);
-            verify(catalogoMock).restarStock(captor.capture());
-            assertTrue(captor.getValue().contains(itemMock1));
+            // El observador llama a catalogo.armarPedido(pedido)
+            verify(catalogoMock, times(1)).armarPedido(pedidoConStockObserver);
+            // No se llama directamente a restarStock
+            verify(catalogoMock, never()).restarStock(anyList());
         }
 
         @Test
         void alCancelarDesdeConfirmado_debeLlamarAReponerStock() {
-            pedidoConStockObserver.agregarVendible(itemMock1);
+            pedidoConStockObserver.agregarVendible(new ItemVendible(1, producto1));
             pedidoConStockObserver.confirmarPedido();
 
             pedidoConStockObserver.cancelarPedido();
@@ -220,17 +241,18 @@ class PedidoTest {
         }
 
         @Test
-        void alCancelarDesdeEnviado_noDebeReponerStock() {
-            pedidoConStockObserver.agregarVendible(itemMock1);
+        void alCancelarDesdeEnviado_debeReponerStock() {
+            pedidoConStockObserver.agregarVendible(new ItemVendible(1, producto1));
             pedidoConStockObserver.confirmarPedido();
             pedidoConStockObserver.pasarAEnPreparacion();
             pedidoConStockObserver.pasarAEnviado();
 
             pedidoConStockObserver.cancelarPedido();
 
-            verify(catalogoMock, never()).reponerStock(anyList());
+            verify(catalogoMock, times(1)).reponerStock(anyList());
         }
     }
+
     @Nested
     class ConstructorYGetters {
         @Test
@@ -251,20 +273,18 @@ class PedidoTest {
         }
 
         @Test
-        void constructorConParametrosNull_debeLanzarNPE() {
+        void constructorConParametrosNull_debeLanzarConstructorExcepcion() {
             PagoDummy pago = new PagoDummy();
             MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
             MedioDePago medioDePago = mock(MedioDePago.class);
 
-            assertThrows(NullPointerException.class,
+            assertThrows(ConstructorException.class,
                     () -> new Pedido(null, metodoEnvio, medioDePago));
-            assertThrows(NullPointerException.class,
+            assertThrows(ConstructorException.class,
                     () -> new Pedido(pago, null, medioDePago));
-            assertThrows(NullPointerException.class,
+            assertThrows(ConstructorException.class,
                     () -> new Pedido(pago, metodoEnvio, null));
         }
-
-        // ... otros tests (getFecha, getObservadores) iguales que antes ...
     }
 
     @Nested
@@ -303,7 +323,7 @@ class PedidoTest {
 
         @Test
         void setMetodoDePago_enConfirmado_debeLanzarExcepcion() {
-            pedido.agregarVendible(itemMock1);
+            pedido.agregarVendible(new ItemVendible(1, producto1));
             pedido.confirmarPedido();
             PagoDummy pago = new PagoDummy();
             MedioDePago medio = mock(MedioDePago.class);
@@ -320,7 +340,7 @@ class PedidoTest {
 
         @Test
         void setMetodoDeEnvio_enConfirmado_debeLanzarExcepcion() {
-            pedido.agregarVendible(itemMock1);
+            pedido.agregarVendible(new ItemVendible(1, producto1));
             pedido.confirmarPedido();
             assertThrows(PedidoExcepcion.class,
                     () -> pedido.setMetodoDeEnvio(mock(MetodoEnvio.class)));
@@ -332,12 +352,10 @@ class PedidoTest {
             MedioDePago medio = mock(MedioDePago.class);
             pedido.asignarMetodoDePago(pago, medio);
 
-            // Verificamos que el pedido pueda cobrar usando el pago asignado
             Pedido pSpy = spy(pedido);
             doReturn(0.0).when(pSpy).calcularCostoEnvio();
             pSpy.cobrarPedido();
 
-            // Verificar que el pago procesó la transacción (usando el contador)
             assertEquals(1, pago.getTransacciones());
             assertEquals(1, pago.getValidaciones());
             assertEquals(1, pago.getReservas());
@@ -365,17 +383,19 @@ class PedidoTest {
             MedioDePago medioDePago = mock(MedioDePago.class);
             Pedido p = new Pedido(pago, metodoEnvio, medioDePago);
 
-            when(itemMock1.getPrecioFinal()).thenReturn(120.0);
-            when(itemMock2.getPrecioFinal()).thenReturn(80.0);
-            p.agregarVendible(itemMock1);
-            p.agregarVendible(itemMock2);
+            // Productos con precios fijos
+            Producto p1 = new Producto("SKU001", "Teclado", "Logitech", Categoria.ELECTRONICA,
+                    "Teclado", 0.0, 120.0, 0.5);
+            Producto p2 = new Producto("SKU002", "Mouse", "Logitech", Categoria.ELECTRONICA,
+                    "Mouse", 0.0, 80.0, 0.2);
+            p.agregarVendible(new ItemVendible(1, p1));
+            p.agregarVendible(new ItemVendible(1, p2));
 
             Pedido pSpy = spy(p);
             doReturn(50.0).when(pSpy).calcularCostoEnvio();
 
             pSpy.cobrarPedido();
 
-            // Verificar que el pago dummy procesó la transacción
             assertEquals(1, pago.getValidaciones());
             assertEquals(1, pago.getReservas());
             assertEquals(1, pago.getTransacciones());
@@ -398,6 +418,143 @@ class PedidoTest {
             assertEquals(1, pago.getValidaciones());
             assertEquals(1, pago.getReservas());
             assertEquals(1, pago.getNotificaciones());
+        }
+    }
+
+    @Nested
+    class NotaCreditoUnica {
+
+        @Test
+        void generarNotaCredito_cuandoYaExiste_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.cancelarPedido(); // genera primera nota
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.generarNotaCredito(50.0, "Intento manual"));
+        }
+
+        @Test
+        void generarNotaCredito_conMontoYMotivoValidos_debeCrearNota() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.cancelarPedido();
+
+            NotaCredito nota = pedido.getNotaCredito();
+            assertNotNull(nota);
+            assertEquals(100.0, nota.getMonto(), 0.001);
+            assertTrue(nota.getMotivo().contains("Confirmado"));
+        }
+    }
+
+    @Nested
+    class OperacionesEnEstadosNoBorrador {
+
+        @Test
+        void agregarVendible_desdeConfirmado_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido(); // ahora está en Confirmado
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto2)));
+        }
+
+        @Test
+        void quitarVendible_desdeConfirmado_debeLanzarExcepcion() {
+            ItemVendible item = new ItemVendible(1, producto1);
+            pedido.agregarVendible(item);
+            pedido.confirmarPedido(); // ahora está en Confirmado
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.quitarVendible(item));
+        }
+
+        @Test
+        void agregarVendible_desdeEnPreparacion_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.pasarAEnPreparacion();
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto2)));
+        }
+
+        @Test
+        void agregarVendible_desdeEnviado_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.pasarAEnPreparacion();
+            pedido.pasarAEnviado();
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto2)));
+        }
+
+        @Test
+        void agregarVendible_desdeEntregado_debeLanzarExcepcion() {
+            pedido.agregarVendible(new ItemVendible(1, producto1));
+            pedido.confirmarPedido();
+            pedido.pasarAEnPreparacion();
+            pedido.pasarAEnviado();
+            pedido.pasarAEntregado();
+
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto2)));
+        }
+
+        @Test
+        void agregarVendible_desdeCancelado_debeLanzarExcepcion() {
+            pedido.cancelarPedido();
+            assertThrows(PedidoExcepcion.class,
+                    () -> pedido.agregarVendible(new ItemVendible(1, producto1)));
+        }
+    }
+
+    @Nested
+    class NotificacionDeCambioEstado {
+
+        @Test
+        void setEstado_debeNotificarATodosLosObservadores() {
+            ObservadorPedido obs1 = mock(ObservadorPedido.class);
+            ObservadorPedido obs2 = mock(ObservadorPedido.class);
+            pedido.agregarObservador(obs1);
+            pedido.agregarObservador(obs2);
+
+            pedido.setEstado(new Confirmado());
+
+            verify(obs1, times(1)).onCambioEstado(any(CambioEstadoEvento.class), eq(pedido));
+            verify(obs2, times(1)).onCambioEstado(any(CambioEstadoEvento.class), eq(pedido));
+        }
+
+        @Test
+        void setEstado_sinObservadores_noDebeLanzarExcepcion() {
+            assertDoesNotThrow(() -> pedido.setEstado(new Confirmado()));
+            assertTrue(pedido.getEstado() instanceof Confirmado);
+        }
+    }
+
+    @Nested
+    class CostoEnvio {
+
+        @Test
+        void calcularCostoEnvio_conDireccionYSucursal_debeUsarMetodoEnvioYDevolverCosto() {
+            PagoDummy pago = new PagoDummy();
+            MetodoEnvio metodoEnvio = mock(MetodoEnvio.class);
+            MedioDePago medioDePago = mock(MedioDePago.class);
+            Pedido p = new Pedido(pago, metodoEnvio, medioDePago);
+
+            Direccion direccion = mock(Direccion.class);
+            Sucursal sucursal = mock(Sucursal.class);
+            when(metodoEnvio.calcularCosto(p, direccion, sucursal)).thenReturn(99.0);
+
+            double costo = p.calcularCostoEnvio(direccion, sucursal);
+            assertEquals(99.0, costo, 0.001);
+            verify(metodoEnvio, times(1)).calcularCosto(p, direccion, sucursal);
+        }
+
+        @Test
+        void calcularCostoEnvio_sinParametros_debeRetornarCero() {
+            assertEquals(0.0, pedido.calcularCostoEnvio());
         }
     }
 }

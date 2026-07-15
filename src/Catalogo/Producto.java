@@ -1,4 +1,6 @@
 package Catalogo;
+import exceptions.CatalogoException;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +17,11 @@ public class Producto extends Vendible{
         this.precio = precio;
         this.peso = peso;
     }
+
+    //Set de atributos estaticos de Producto. Utilizados para evitar repetidos al agregar atributo.
+    private static final Set<String> NOMBRES_ATRIBUTOS_FIJOS = Set.of(
+            "sku", "nombre", "marca", "categoria", "descripcion", "descuento", "precio", "peso"
+    );
 
     // getPrecioBase retorna el precio sin aplicar el descuento del Producto.
     @Override
@@ -36,9 +43,23 @@ public class Producto extends Vendible{
     public boolean validarAtributoDinamico(String nombreBuscado) {
     	return this.atributos.stream().anyMatch(atributo->atributo.getNombre().equals(nombreBuscado));
     }
-    
+
     public <T> void agregarAtributo(String nombre, T valor) {
-    	atributos.add(new Atributo(nombre, valor));
+        if (nombre == null || nombre.isBlank()) {
+            throw new CatalogoException("El nombre del atributo no puede ser null o vacío");
+        }
+        if (valor == null) {
+            throw new CatalogoException("El valor del atributo no puede ser null");
+        }
+        String nombreLower = nombre.toLowerCase();
+
+        if (NOMBRES_ATRIBUTOS_FIJOS.contains(nombreLower)) {
+            throw new CatalogoException("El nombre '" + nombre + "' está reservado para un atributo fijo del producto");
+        }
+        if (validarAtributoDinamico(nombre)) {
+            throw new CatalogoException("Ya existe un atributo dinámico con el nombre: " + nombre);
+        }
+        atributos.add(new Atributo<>(nombre, valor));
     }
 
     public <T> T getAtributoNombre(String nombre) {

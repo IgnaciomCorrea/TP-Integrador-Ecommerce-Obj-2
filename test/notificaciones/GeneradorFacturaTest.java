@@ -1,62 +1,57 @@
 package notificaciones;
 
+import Catalogo.Categoria;
+import Catalogo.ItemVendible;
+import Catalogo.Producto;
 import org.junit.jupiter.api.Test;
 import pedido.*;
 import testutils.PedidoFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GeneradorFacturaTest {
 
     @Test
-    void onCambioEstado_cuandoNuevoEstadoEsEntregado_debeGenerarFactura() {
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+    void onCambioEstado_cuandoNuevoEstadoEsEntregado_debeAgregarFactura() {
+        GeneradorFactura generador = new GeneradorFactura();
+        Pedido pedido = PedidoFactory.pedido();
+        
+        Producto p1 = new Producto("SKU1", "Producto1", "Marca", Categoria.ELECTRONICA,
+                "Desc", 0.0, 100.0, 0.5);
+        Producto p2 = new Producto("SKU2", "Producto2", "Marca", Categoria.ELECTRONICA,
+                "Desc", 0.0, 50.0, 0.3);
+        pedido.agregarVendible(new ItemVendible(2, p1)); // 200
+        pedido.agregarVendible(new ItemVendible(1, p2)); // 50
 
-        try {
-            GeneradorFactura generador = new GeneradorFactura();
-            Pedido pedido = PedidoFactory.pedido();
-            CambioEstadoEvento evento = new CambioEstadoEvento(new Enviado(), new Entregado());
+        CambioEstadoEvento evento = new CambioEstadoEvento(new Enviado(), new Entregado());
 
-            generador.onCambioEstado(evento, pedido);
+        generador.onCambioEstado(evento, pedido);
 
-            assertTrue(outContent.toString().contains("Generando factura para el pedido."));
-        } finally {
-            System.setOut(originalOut);
-        }
+        assertEquals(1, generador.getFacturas().size());
+        Factura factura = generador.getFacturas().get(0);
+        assertNotNull(factura);
     }
 
     @Test
-    void onCambioEstado_cuandoNuevoEstadoNoEsEntregado_noDebeGenerarFactura() {
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+    void onCambioEstado_cuandoNuevoEstadoNoEsEntregado_noDebeAgregarFactura() {
+        GeneradorFactura generador = new GeneradorFactura();
+        Pedido pedido = PedidoFactory.pedido();
 
-        try {
-            GeneradorFactura generador = new GeneradorFactura();
-            Pedido pedido = PedidoFactory.pedido();
+        generador.onCambioEstado(new CambioEstadoEvento(new Borrador(), new Confirmado()), pedido);
+        generador.onCambioEstado(new CambioEstadoEvento(new Confirmado(), new EnPreparacion()), pedido);
+        generador.onCambioEstado(new CambioEstadoEvento(new EnPreparacion(), new Enviado()), pedido);
+        generador.onCambioEstado(new CambioEstadoEvento(new Confirmado(), new Cancelado()), pedido);
 
-            generador.onCambioEstado(new CambioEstadoEvento(new Borrador(), new Confirmado()), pedido);
-            generador.onCambioEstado(new CambioEstadoEvento(new Confirmado(), new EnPreparacion()), pedido);
-            generador.onCambioEstado(new CambioEstadoEvento(new EnPreparacion(), new Enviado()), pedido);
-            generador.onCambioEstado(new CambioEstadoEvento(new Confirmado(), new Cancelado()), pedido);
-
-            assertFalse(outContent.toString().contains("Generando factura"));
-        } finally {
-            System.setOut(originalOut);
-        }
+        assertTrue(generador.getFacturas().isEmpty());
     }
 
     @Test
-    void onCambioEstado_conEstadoEntregado_noLanzaExcepcion() {
+    void onCambioEstado_conEstadoEntregado_noLanzaExcepcionYAgregaFactura() {
         GeneradorFactura generador = new GeneradorFactura();
         Pedido pedido = PedidoFactory.pedido();
         CambioEstadoEvento evento = new CambioEstadoEvento(new Enviado(), new Entregado());
 
         assertDoesNotThrow(() -> generador.onCambioEstado(evento, pedido));
+        assertEquals(1, generador.getFacturas().size());
     }
 }

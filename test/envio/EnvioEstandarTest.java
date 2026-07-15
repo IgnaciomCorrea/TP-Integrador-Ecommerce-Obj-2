@@ -1,6 +1,8 @@
 package envio;
 
+import Catalogo.Categoria;
 import Catalogo.ItemVendible;
+import Catalogo.Producto;
 import direccion.Direccion;
 import pedido.Pedido;
 import sucursal.Sucursal;
@@ -20,12 +22,6 @@ class EnvioEstandarTest {
     @Mock
     private CorreoArgentina correoMock;
 
-    @Mock
-    private ItemVendible itemMock1;
-
-    @Mock
-    private ItemVendible itemMock2;
-
     private EnvioEstandar envioEstandar;
     private Pedido pedido;
 
@@ -34,12 +30,16 @@ class EnvioEstandarTest {
         envioEstandar = new EnvioEstandar(correoMock);
         pedido = PedidoFactory.pedido();
 
-        // Configurar mocks para calcular peso total
-        when(itemMock1.getPeso()).thenReturn(0.5);
-        when(itemMock2.getPeso()).thenReturn(0.2);
+        // Crear productos con peso
+        Producto producto1 = new Producto(
+                "SKU001", "Teclado", "Logitech", Categoria.ELECTRONICA,
+                "Teclado mecánico", 0.0, 100.0, 0.5);
+        Producto producto2 = new Producto(
+                "SKU002", "Mouse", "Logitech", Categoria.ELECTRONICA,
+                "Mouse inalámbrico", 0.0, 50.0, 0.2);
 
-        pedido.agregarVendible(itemMock1);
-        pedido.agregarVendible(itemMock2);
+        pedido.agregarVendible(new ItemVendible(1, producto1));
+        pedido.agregarVendible(new ItemVendible(1, producto2));
     }
 
     @Test

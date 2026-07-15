@@ -2,6 +2,7 @@ package Catalogo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import exceptions.CatalogoException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ class ProductoTest {
     @DisplayName("Deberia crear un producto con todos sus atributos correctamente")
     void testCrearProducto() {
         assertNotNull(producto);
-        // assertEquals(SKU, producto.getSKU());
+        assertEquals(SKU, producto.getSku());
         assertEquals(NOMBRE, producto.getNombre());
         assertEquals(CATEGORIA, producto.getCategoria());
         assertEquals(DESCRIPCION, producto.getDescripcion());
@@ -119,12 +120,12 @@ class ProductoTest {
     @Test
     @DisplayName("Deberia agregar atributos dinamicos de diferentes tipos")
     void testAgregarAtributosDinamicos() {
-        producto.agregarAtributo("peso", 2.5);        // Double
+        producto.agregarAtributo("libras", 2.5);        // Double
         producto.agregarAtributo("garantia", 12);     // Integer
         producto.agregarAtributo("esNuevo", true);    // Boolean
 
-        assertEquals(2.5, producto.getAtributoNombre("peso"));
-        assertTrue(producto.validarAtributoDinamico("peso"));
+        assertEquals(2.5, producto.getAtributoNombre("libras"));
+        assertTrue(producto.validarAtributoDinamico("libras"));
         assertTrue(producto.validarAtributoDinamico("garantia"));
         assertTrue(producto.validarAtributoDinamico("esNuevo"));
     }
@@ -183,5 +184,64 @@ class ProductoTest {
             producto.agregarAtributo("nulo", null);
             assertTrue(producto.validarAtributoDinamico("nulo"));
         }
+
+        @Test
+        @DisplayName("Agregar atributo con nombre 'nombre' debe lanzar excepción (reservado)")
+        void agregarAtributo_conNombreNombre_debeLanzarExcepcion() {
+            assertThrows(CatalogoException.class,
+                    () -> producto.agregarAtributo("nombre", "valor"));
+        }
+
+        @Test
+        @DisplayName("Agregar atributo con nombre 'marca' debe lanzar excepción (reservado)")
+        void agregarAtributo_conNombreMarca_debeLanzarExcepcion() {
+            assertThrows(CatalogoException.class,
+                    () -> producto.agregarAtributo("marca", "valor"));
+        }
+
+        @Test
+        @DisplayName("Agregar atributo con nombre 'categoria' debe lanzar excepción (reservado)")
+        void agregarAtributo_conNombreCategoria_debeLanzarExcepcion() {
+            assertThrows(CatalogoException.class,
+                    () -> producto.agregarAtributo("categoria", "valor"));
+        }
+
+        @Test
+        @DisplayName("Agregar atributo con nombre 'descripcion' debe lanzar excepción (reservado)")
+        void agregarAtributo_conNombreDescripcion_debeLanzarExcepcion() {
+            assertThrows(CatalogoException.class,
+                    () -> producto.agregarAtributo("descripcion", "valor"));
+        }
+
+        @Test
+        @DisplayName("Agregar atributo con nombre 'descuento' debe lanzar excepción (reservado)")
+        void agregarAtributo_conNombreDescuento_debeLanzarExcepcion() {
+            assertThrows(CatalogoException.class,
+                    () -> producto.agregarAtributo("descuento", 10.0));
+        }
+
+        @Test
+        @DisplayName("Agregar atributo con nombre 'precio' debe lanzar excepción (reservado)")
+        void agregarAtributo_conNombrePrecio_debeLanzarExcepcion() {
+            assertThrows(CatalogoException.class,
+                    () -> producto.agregarAtributo("precio", 100.0));
+        }
+
+        @Test
+        @DisplayName("Agregar atributo con nombre 'peso' debe lanzar excepción (reservado)")
+        void agregarAtributo_conNombrePeso_debeLanzarExcepcion() {
+            assertThrows(CatalogoException.class,
+                    () -> producto.agregarAtributo("peso", 2.5));
+        }
+
+        @Test
+        @DisplayName("Agregar atributo con nombre en mayúsculas como 'SKU' debe lanzar excepción (case insensitive)")
+        void agregarAtributo_conNombreMayusculasReservado_debeLanzarExcepcion() {
+            assertThrows(CatalogoException.class,
+                    () -> producto.agregarAtributo("SKU", "valor"));
+            assertThrows(CatalogoException.class,
+                    () -> producto.agregarAtributo("PESO", 5.0));
+        }
+
     }
 }

@@ -1,36 +1,39 @@
 package Catalogo;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import reportes.ReportVisitor;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ItemVendibleTest {
 
-    private Producto productoMock;
-    private Paquete paqueteMock;
+    private Producto producto;
+    private Paquete paquete;
     private ItemVendible itemProducto;
     private ItemVendible itemPaquete;
 
     @BeforeEach
     void setUp() {
-        productoMock = mock(Producto.class);
-        paqueteMock = mock(Paquete.class);
+        producto = new Producto(
+                "SKU001", "Producto Test", "Marca", Categoria.ELECTRONICA,
+                "Descripción", 0.0, 100.0, 0.5
+        );
 
-        when(productoMock.getPrecioFinal()).thenReturn(100.0);
-        when(productoMock.getPeso()).thenReturn(0.5);
-        when(productoMock.getNombre()).thenReturn("Producto Test");
-        when(productoMock.getSku()).thenReturn("SKU001");
+        paquete = new Paquete(
+                "SKU002", "Paquete Test", "Marca", Categoria.ELECTRONICA,
+                "Paquete descripción", 0.0
+        );
+        Producto interno = new Producto(
+                "SKU-INT", "Interno", "Marca", Categoria.ELECTRONICA,
+                "Interno desc", 0.0, 200.0, 1.2
+        );
+        paquete.agregarVendible(new ItemVendible(1, interno));
 
-        when(paqueteMock.getPrecioFinal()).thenReturn(200.0);
-        when(paqueteMock.getPeso()).thenReturn(1.2);
-        when(paqueteMock.getNombre()).thenReturn("Paquete Test");
-        when(paqueteMock.getSku()).thenReturn("SKU002");
-
-        itemProducto = new ItemVendible(3, productoMock);
-        itemPaquete = new ItemVendible(2, paqueteMock);
+        itemProducto = new ItemVendible(3, producto);
+        itemPaquete = new ItemVendible(2, paquete);
     }
 
     @Test
@@ -38,32 +41,28 @@ class ItemVendibleTest {
     void constructor_valido() {
         assertNotNull(itemProducto);
         assertEquals(3, itemProducto.getCantidad());
-        assertEquals(productoMock, itemProducto.vendible); // acceso directo, mejor usar getters
+        assertEquals("SKU001", itemProducto.getSku());
     }
 
     @Test
     @DisplayName("Constructor con cantidad < 1 debe lanzar IllegalArgumentException")
     void constructor_cantidadInvalida() {
-        assertThrows(IllegalArgumentException.class, () -> new ItemVendible(0, productoMock));
-        assertThrows(IllegalArgumentException.class, () -> new ItemVendible(-1, productoMock));
+        assertThrows(IllegalArgumentException.class, () -> new ItemVendible(0, producto));
+        assertThrows(IllegalArgumentException.class, () -> new ItemVendible(-1, producto));
     }
 
     @Test
     @DisplayName("getPrecioFinal debe multiplicar el precio del vendible por la cantidad")
     void getPrecioFinal() {
-        assertEquals(300.0, itemProducto.getPrecioFinal(), 0.001);
-        assertEquals(400.0, itemPaquete.getPrecioFinal(), 0.001);
-        verify(productoMock, times(1)).getPrecioFinal();
-        verify(paqueteMock, times(1)).getPrecioFinal();
+        assertEquals(300.0, itemProducto.getPrecioFinal(), 0.001); // 100 * 3
+        assertEquals(400.0, itemPaquete.getPrecioFinal(), 0.001); // 200 * 2
     }
 
     @Test
     @DisplayName("getPeso debe multiplicar el peso del vendible por la cantidad")
     void getPeso() {
-        assertEquals(1.5, itemProducto.getPeso(), 0.001);
-        assertEquals(2.4, itemPaquete.getPeso(), 0.001);
-        verify(productoMock, times(1)).getPeso();
-        verify(paqueteMock, times(1)).getPeso();
+        assertEquals(1.5, itemProducto.getPeso(), 0.001); // 0.5 * 3
+        assertEquals(2.4, itemPaquete.getPeso(), 0.001); // 1.2 * 2
     }
 
     @Test
@@ -92,7 +91,8 @@ class ItemVendibleTest {
     void accept_producto() {
         ReportVisitor visitor = mock(ReportVisitor.class);
         itemProducto.accept(visitor);
-        verify(visitor, times(1)).visitProducto(productoMock, 3, 300.0);
+
+        verify(visitor, times(1)).visitProducto(producto, 3, 300.0);
         verify(visitor, never()).visitPaquete(any(), anyInt(), anyDouble());
     }
 
@@ -101,7 +101,8 @@ class ItemVendibleTest {
     void accept_paquete() {
         ReportVisitor visitor = mock(ReportVisitor.class);
         itemPaquete.accept(visitor);
-        verify(visitor, times(1)).visitPaquete(paqueteMock, 2, 400.0);
+
+        verify(visitor, times(1)).visitPaquete(paquete, 2, 400.0);
         verify(visitor, never()).visitProducto(any(), anyInt(), anyDouble());
     }
 }

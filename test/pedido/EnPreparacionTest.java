@@ -108,4 +108,9 @@ class EnPreparacionTest {
         estadoEnPreparacion.pasarAEnviado(pedidoMock);
         verify(pedidoMock, times(1)).setEstado(any(Enviado.class));
     }
+
+    @Test
+    void debeReponerStockAlCancelar_debeRetornarTrue() {
+        assertTrue(estadoEnPreparacion.debeReponerStockAlCancelar());
+    }
 }

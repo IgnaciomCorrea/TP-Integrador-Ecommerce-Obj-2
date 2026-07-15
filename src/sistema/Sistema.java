@@ -9,9 +9,10 @@ import Catalogo.Catalogo;
 import Catalogo.StockVendible;
 import CriterioBusqueda.Criterio;
 import envio.MetodoEnvio;
+import exceptions.PedidoExcepcion;
 import metodoPago.*;
-import pedido.Entregado;
 import pedido.ObservadorStock;
+import notificaciones.GeneradorFactura;
 import pedido.Pedido;
 import reportes.ReporteProductosMasVendidos;
 import Catalogo.ItemVendible;
@@ -20,11 +21,12 @@ public class Sistema {
 
 	private Catalogo catalogo;
 	private ArrayList<Pedido> pedidos;
+	private GeneradorFactura generadorFactura;
 
 	public Sistema(Catalogo catalogo) {
 		this.catalogo = catalogo;
 		this.pedidos = new ArrayList<>();
-
+		this.generadorFactura = new GeneradorFactura();
 	}
 
 	public List<StockVendible> filtrarCon(Criterio criterio) {
@@ -36,11 +38,13 @@ public class Sistema {
 
 	public void armarPedido(Pedido pedido){
 		if (pedido == null) {
-			throw new IllegalArgumentException("El pedido no puede ser nulo");
+			throw new PedidoExcepcion("El pedido no puede ser nulo");
 		}
 
 		pedido.agregarObservador(new ObservadorStock(catalogo));
+		pedido.agregarObservador(generadorFactura);
 		pedidos.add(pedido);
+
 
 		if (catalogo.verificarStockPedido(pedido)) {
 			pedido.confirmarPedido();
@@ -52,7 +56,7 @@ public class Sistema {
 	public ReporteProductosMasVendidos generarReporteProductosMasVendidos(LocalDate inicio, LocalDate fin) {
 		ReporteProductosMasVendidos visitor = new ReporteProductosMasVendidos(inicio, fin);
 		for (Pedido pedido : pedidos) {
-			if (pedido.getEstado() instanceof Entregado && estaDentroDelPeriodo(pedido.getFecha(), inicio, fin)) {
+			if (pedido.getEstado().esEntregado() && estaDentroDelPeriodo(pedido.getFecha(), inicio, fin)) {
 				for (ItemVendible item : pedido.getVendibles()) {
 					item.accept(visitor);
 				}
@@ -60,7 +64,6 @@ public class Sistema {
 		}
 		return visitor;
 	}
-
 	private boolean estaDentroDelPeriodo(LocalDate fecha, LocalDate inicio, LocalDate fin) {
 		return !fecha.isBefore(inicio) && !fecha.isAfter(fin);
 	}
