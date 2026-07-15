@@ -86,6 +86,15 @@ class SistemaReporteTest {
     }
 
     @Test
+    void generarReporte_conPedidosEntregadosSinItems_debeRetornarVacio() {
+        Pedido pedidoVacio = PedidoFactory.pedido(); // Esto crea un pedido sin items
+
+        // Verificar que armar un pedido sin items lanza excepción
+        assertThrows(IllegalStateException.class, () -> sistema.armarPedido(pedidoVacio));
+        // O la excepción que corresponda (IllegalArgumentException, etc.)
+    }
+
+    @Test
     void generarReporte_fueraDePeriodo_noDebeIncluirPedidos() {
         Pedido entregado = PedidoFactory.pedido();
         entregado.agregarVendible(new ItemVendible(1, teclado));

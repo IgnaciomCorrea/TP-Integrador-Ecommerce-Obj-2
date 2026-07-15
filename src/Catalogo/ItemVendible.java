@@ -13,7 +13,11 @@ public class ItemVendible {
 		this.cantidad = cantidad;
 		this.vendible = vendible;
 	}
-	
+
+	public Double getPrecioBase() {
+		return this.vendible.getPrecioBase() * cantidad;
+	}
+
 	public Double getPrecioFinal() {
 		return this.vendible.getPrecioFinal() * cantidad;
 	}

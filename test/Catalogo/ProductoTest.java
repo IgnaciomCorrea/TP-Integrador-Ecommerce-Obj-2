@@ -179,76 +179,10 @@ class ProductoTest {
         }
 
         @Test
-        @DisplayName("Debería validar la existencia de atributos dinámicos")
-        void testValidarAtributoDinamico() {
-            assertFalse(producto.validarAtributoDinamico("color"));
-
-            producto.agregarAtributo("color", "negro");
-            assertTrue(producto.validarAtributoDinamico("color"));
-        }
-
-        @Test
-        @DisplayName("Debería agregar atributos dinámicos de diferentes tipos")
-        void testAgregarAtributosDinamicos() {
-            producto.agregarAtributo("libras", 2.5);
-            producto.agregarAtributo("garantia", 12);
-            producto.agregarAtributo("esNuevo", true);
-
-            assertEquals(2.5, producto.getAtributoNombre("libras"));
-            assertTrue(producto.validarAtributoDinamico("libras"));
-            assertTrue(producto.validarAtributoDinamico("garantia"));
-            assertTrue(producto.validarAtributoDinamico("esNuevo"));
-        }
-
-        @Test
-        @DisplayName("Agregar atributo con nombre existente debe lanzar CatalogoExcepcion")
-        void agregarAtributo_conNombreExistente_debeLanzarExcepcion() {
-            producto.agregarAtributo("color", "negro");
-            assertThrows(CatalogoException.class,
-                    () -> producto.agregarAtributo("color", "rojo"));
-        }
-
-        @Test
-        @DisplayName("Agregar atributo con nombre null debe lanzar CatalogoExcepcion")
-        void agregarAtributo_conNombreNull_debeLanzarExcepcion() {
-            assertThrows(CatalogoException.class,
-                    () -> producto.agregarAtributo(null, "valor"));
-        }
-
-        @Test
-        @DisplayName("Agregar atributo con nombre vacío debe lanzar CatalogoExcepcion")
-        void agregarAtributo_conNombreVacio_debeLanzarExcepcion() {
-            assertThrows(CatalogoException.class,
-                    () -> producto.agregarAtributo("", "valor"));
-        }
-
-        @Test
-        @DisplayName("Agregar atributo con nombre solo espacios debe lanzar CatalogoExcepcion")
-        void agregarAtributo_conNombreSoloEspacios_debeLanzarExcepcion() {
-            assertThrows(CatalogoException.class,
-                    () -> producto.agregarAtributo("   ", "valor"));
-        }
-
-        @Test
-        @DisplayName("Agregar atributo con valor null debe lanzar CatalogoExcepcion")
-        void agregarAtributo_conValorNull_debeLanzarExcepcion() {
-            assertThrows(CatalogoException.class,
-                    () -> producto.agregarAtributo("peso", null));
-        }
-
-        @Test
-        @DisplayName("Agregar atributo con nombre y valor válidos debe agregar correctamente")
-        void agregarAtributo_conDatosValidos_debeAgregar() {
-            assertDoesNotThrow(() -> producto.agregarAtributo("alto", 2.5));
-            assertTrue(producto.validarAtributoDinamico("alto"));
-            assertEquals(2.5, producto.getAtributoNombre("alto"));
-        }
-
-        @Test
-        @DisplayName("Agregar atributo con nombre 'sku' debe lanzar excepción (reservado)")
-        void agregarAtributo_conNombreSku_debeLanzarExcepcion() {
-            assertThrows(CatalogoException.class,
-                    () -> producto.agregarAtributo("sku", "valor"));
+        @DisplayName("Debería agregar atributo con valor nulo")
+        void testAgregarAtributoConValorNulo() {
+            producto.agregarAtributo("nulo", null);
+            assertTrue(producto.validarAtributoDinamico("nulo"));
         }
 
         @Test

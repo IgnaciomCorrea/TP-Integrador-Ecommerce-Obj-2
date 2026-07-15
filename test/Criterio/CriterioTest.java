@@ -176,15 +176,15 @@ class CriterioTest {
         @Test
         @DisplayName("Criterio agrega y elimina en OR")
         void OR_agregarYEliminar() {
-            Criterio categoriaElectronica = new CriterioCategoria(Categoria.ELECTRONICA);
-            or.agregarCriterio(categoriaElectronica);
+            Criterio criterioCategoria = new CriterioCategoria(Categoria.ELECTRONICA);
+            or.agregarCriterio(criterioCategoria);
             assertTrue(or.validar(teclado));
 
             Criterio precio = new CriterioPrecio(100.0);
             or.agregarCriterio(precio);
             assertTrue(or.validar(teclado));
 
-            or.eliminarCriterio(categoriaElectronica);
+            or.eliminarCriterio(criterioCategoria);
             // Aún tiene el precio, que cumple
             assertTrue(or.validar(teclado));
 
