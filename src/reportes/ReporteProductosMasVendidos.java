@@ -22,17 +22,9 @@ public class ReporteProductosMasVendidos implements ReportVisitor {
     public LocalDate getFechaFin() { return fechaFin; }
 
     @Override
-    public void visitProducto(Producto producto, int cantidadVendida, double precioTotal) {
-        String key = producto.getSku();
-        DatosVenta datos = ventas.getOrDefault(key, new DatosVenta(producto));
-        datos.agregarVenta(cantidadVendida, precioTotal);
-        ventas.put(key, datos);
-    }
-
-    @Override
-    public void visitPaquete(Paquete paquete, int cantidadVendida, double precioTotal) {
-        String key = paquete.getSku();
-        DatosVenta datos = ventas.getOrDefault(key, new DatosVenta(paquete));
+    public void visit(Vendible vendible, int cantidadVendida, double precioTotal) {
+        String key = vendible.getSku();
+        DatosVenta datos = ventas.getOrDefault(key, new DatosVenta(vendible));
         datos.agregarVenta(cantidadVendida, precioTotal);
         ventas.put(key, datos);
     }

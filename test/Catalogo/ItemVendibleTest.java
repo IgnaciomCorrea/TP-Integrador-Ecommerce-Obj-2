@@ -92,8 +92,8 @@ class ItemVendibleTest {
         ReportVisitor visitor = mock(ReportVisitor.class);
         itemProducto.accept(visitor);
 
-        verify(visitor, times(1)).visitProducto(producto, 3, 300.0);
-        verify(visitor, never()).visitPaquete(any(), anyInt(), anyDouble());
+        verify(visitor, times(1)).visit(producto, 3, 300.0);
+        verify(visitor, never()).visit(any(), anyInt(), anyDouble());
     }
 
     @Test
@@ -102,7 +102,7 @@ class ItemVendibleTest {
         ReportVisitor visitor = mock(ReportVisitor.class);
         itemPaquete.accept(visitor);
 
-        verify(visitor, times(1)).visitPaquete(paquete, 2, 400.0);
-        verify(visitor, never()).visitProducto(any(), anyInt(), anyDouble());
+        verify(visitor, times(1)).visit(paquete, 2, 400.0);
+        verify(visitor, never()).visit(any(), anyInt(), anyDouble());
     }
 }

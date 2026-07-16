@@ -45,10 +45,7 @@ public class ItemVendible {
 	}
 
 	public void accept(ReportVisitor visitor) {
-		if (vendible instanceof Producto) {
-			visitor.visitProducto((Producto) vendible, this.cantidad, this.getPrecioFinal());
-		} else if (vendible instanceof Paquete) {
-			visitor.visitPaquete((Paquete) vendible, this.cantidad, this.getPrecioFinal());
-		}
+		visitor.visit(this.vendible, this.cantidad, this.getPrecioFinal());
+
 	}
 }

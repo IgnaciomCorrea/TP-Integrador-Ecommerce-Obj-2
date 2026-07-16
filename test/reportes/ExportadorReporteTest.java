@@ -29,9 +29,9 @@ class ExportadorReporteTest {
                 LocalDate.of(2026, 12, 31)
         );
 
-        reporte.visitProducto(p1, 3, 300.0);
-        reporte.visitProducto(p2, 2, 100.0);
-        reporte.visitPaquete(paq, 1, 135.0);
+        reporte.visit(p1, 3, 300.0);
+        reporte.visit(p2, 2, 100.0);
+        reporte.visit(paq, 1, 135.0);
     }
 
     @Test

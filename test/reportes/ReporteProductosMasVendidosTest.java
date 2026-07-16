@@ -34,8 +34,8 @@ class ReporteProductosMasVendidosTest {
 
     @Test
     void visitProducto_debeAcumularCantidadYPrecio() {
-        reporte.visitProducto(producto1, 3, 300.0);
-        reporte.visitProducto(producto1, 2, 200.0);
+        reporte.visit(producto1, 3, 300.0);
+        reporte.visit(producto1, 2, 200.0);
 
         List<ItemVenta> resultados = reporte.getResultados();
         assertEquals(1, resultados.size());
@@ -48,9 +48,9 @@ class ReporteProductosMasVendidosTest {
 
     @Test
     void visitProducto_y_visitPaquete_debenAcumularPorSeparado() {
-        reporte.visitProducto(producto1, 3, 300.0);
-        reporte.visitPaquete(paquete1, 2, 200.0);
-        reporte.visitProducto(producto2, 5, 250.0);
+        reporte.visit(producto1, 3, 300.0);
+        reporte.visit(paquete1, 2, 200.0);
+        reporte.visit(producto2, 5, 250.0);
 
         List<ItemVenta> resultados = reporte.getResultados();
         assertEquals(3, resultados.size());
@@ -63,9 +63,9 @@ class ReporteProductosMasVendidosTest {
 
     @Test
     void getResultados_debeOrdenarPorCantidadDescendente() {
-        reporte.visitProducto(producto1, 2, 200.0);
-        reporte.visitProducto(producto2, 5, 250.0);
-        reporte.visitPaquete(paquete1, 3, 300.0);
+        reporte.visit(producto1, 2, 200.0);
+        reporte.visit(producto2, 5, 250.0);
+        reporte.visit(paquete1, 3, 300.0);
 
         List<ItemVenta> resultados = reporte.getResultados();
         assertEquals(3, resultados.size());
@@ -76,8 +76,8 @@ class ReporteProductosMasVendidosTest {
 
     @Test
     void getResultados_conMismoSku_debeSumarCantidades() {
-        reporte.visitProducto(producto1, 2, 200.0);
-        reporte.visitProducto(producto1, 3, 300.0);
+        reporte.visit(producto1, 2, 200.0);
+        reporte.visit(producto1, 3, 300.0);
 
         List<ItemVenta> resultados = reporte.getResultados();
         assertEquals(1, resultados.size());
@@ -90,8 +90,8 @@ class ReporteProductosMasVendidosTest {
         // Producto1: 2 unidades a 200 total => precio promedio 100
         // Producto1: 3 unidades a 330 total => precio promedio 110
         // Producto1: total 5 unidades, precio total 530 => promedio 106
-        reporte.visitProducto(producto1, 2, 200.0);
-        reporte.visitProducto(producto1, 3, 330.0);
+        reporte.visit(producto1, 2, 200.0);
+        reporte.visit(producto1, 3, 330.0);
 
         List<ItemVenta> resultados = reporte.getResultados();
         assertEquals(1, resultados.size());

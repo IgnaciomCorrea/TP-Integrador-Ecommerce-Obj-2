@@ -2,8 +2,8 @@ package reportes;
 
 import Catalogo.Producto;
 import Catalogo.Paquete;
+import Catalogo.Vendible;
 
 public interface ReportVisitor {
-    void visitProducto(Producto producto, int cantidadVendida, double precioTotal);
-    void visitPaquete(Paquete paquete, int cantidadVendida, double precioTotal);
+    void visit(Vendible vendible, int cantidadVendida, double precioTotal);
 }
