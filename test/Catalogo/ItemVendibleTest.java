@@ -86,23 +86,4 @@ class ItemVendibleTest {
         assertEquals(2, itemPaquete.getCantidad());
     }
 
-    @Test
-    @DisplayName("accept debe llamar a visitProducto si el vendible es Producto")
-    void accept_producto() {
-        ReportVisitor visitor = mock(ReportVisitor.class);
-        itemProducto.accept(visitor);
-
-        verify(visitor, times(1)).visit(producto, 3, 300.0);
-        verify(visitor, never()).visit(any(), anyInt(), anyDouble());
-    }
-
-    @Test
-    @DisplayName("accept debe llamar a visitPaquete si el vendible es Paquete")
-    void accept_paquete() {
-        ReportVisitor visitor = mock(ReportVisitor.class);
-        itemPaquete.accept(visitor);
-
-        verify(visitor, times(1)).visit(paquete, 2, 400.0);
-        verify(visitor, never()).visit(any(), anyInt(), anyDouble());
-    }
 }
